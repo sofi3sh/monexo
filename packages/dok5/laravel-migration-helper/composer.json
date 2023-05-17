@@ -1,0 +1,29 @@
+{
+  "name": "dok5/laravel-migration-helper",
+  "description": "Laravel migration helper.",
+  "keywords": [
+    "dok5",
+    "laravel",
+    "localization"
+  ],
+  "license": "MIT",
+  "version": "1.0.4.0",
+  "authors": [
+    {
+      "name": "Dok5",
+      "email": "dok112@protonmail.com",
+      "homepage": ""
+    }
+  ],
+  "require": {},
+  "require-dev": {},
+  "autoload": {
+    "psr-4": {
+      "Dok5\\MigrationHelper\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {}
+  },
+  "minimum-stability": "dev"
+}

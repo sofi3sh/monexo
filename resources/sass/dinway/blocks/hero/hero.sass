@@ -1,0 +1,251 @@
+@import './company-indicators'
+
+.hero
+
+  &__container
+    display: grid
+    align-items: center
+    min-height: 750px
+    height: calc(100vh - 100px)
+    max-width: 1190px
+    padding-top: 24px
+    padding-bottom: 24px
+    overflow: hidden
+
+  &__banner
+    position: fixed
+    background-color: var(--color-blue)
+    text-align: center
+    vertical-align: middle
+    right: 0
+    top: calc(110px + 10%)
+    height: 100%
+    max-height: 150px
+    width: 50px
+    line-height: 50px
+    writing-mode: vertical-rl
+    color: var(--color-white)
+    z-index: 3
+    border-radius: 30px 0 0 30px
+
+
+  &-video 
+    position: fixed
+    top: 0
+    left: 0
+    z-index: 100
+    width: 100%
+    height: 100%
+    background-color: rgba(0, 0, 0, 0.4)
+    display: flex
+    justify-content: center
+    align-items: center
+
+
+  &-video__body 
+    position: relative
+    width: 80%
+    max-width: 720px
+    height: 405px
+
+
+  &-video__embed 
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+
+
+  &-video__close 
+    position: absolute
+    z-index: 200
+    right: -25px
+    top: 0
+    stroke: var(--color-black)
+    -webkit-transition: stroke .3s
+    transition: stroke .3s
+    cursor: pointer
+
+
+  &-video__close:hover 
+    stroke: var(--color-white)
+
+  &-content 
+    display: grid
+    grid-template-areas: "text img" "btns img"
+    grid-template-columns: 5fr 7fr
+    grid-template-rows: min-content min-content
+    grid-gap: 30px
+    align-items: center
+
+  &-text 
+    grid-area: text
+
+  &-text__info 
+    margin-bottom: 18px
+
+  &-img 
+    position: relative
+    grid-area: img
+    
+    &--pr-55
+      padding-right: 55px
+
+
+  &-img__img 
+    width: 753px
+    height: 100%
+
+  &-btns 
+    grid-area: btns
+    position: relative
+    display: grid
+    grid-template-columns: 1fr 1fr
+    grid-gap: 15px
+
+    +md-block
+      grid-template-columns: 1fr
+
+  &-btn 
+    display: block
+    width: 100%
+    font-size: 16px
+    max-width: 370px
+    white-space: nowrap
+
+  &-title 
+    font-size: 72px
+    font-weight: 700
+    line-height: 100%
+    color: var(--color-blue)
+    margin-bottom: 22px
+    letter-spacing: 1.2
+
+  &-subtitle
+    padding-right: 15px
+    font-size: 18px
+    line-height: 29px
+
+  &__currency 
+    position: absolute
+    top: 120px
+    left: 0
+    right: 0
+    padding: 0 10px
+
+
+  &_main &-content 
+    position: relative
+    grid-template-columns: 5fr 7fr
+
+  &_main &-img__youtube 
+    position: absolute
+    top: 52%
+    left: 30.5%
+    cursor: pointer
+    display: -webkit-box
+    display: flex
+
+  &_bt &-content 
+    grid-column-gap: 72px
+    grid-template-rows: 250px 60px
+
+  &_bt &-title__decor 
+    color: var(--hawkes-blue)
+
++bp1050-block 
+  .hero
+    
+    &__container 
+      height: initial
+      align-items: end
+    
+
+    &-content 
+      grid-row-gap: 30px
+      grid-template-columns: 1fr
+      grid-template-areas: "text" "img" "btns"
+    
+
+    &__title 
+      text-align: center
+      max-width: 100%
+    
+
+    &__subtitle 
+      max-width: 700px
+      margin: 0 auto
+    
+
+    &-text 
+      justify-self: center
+
+    &-img 
+      justify-self: center
+    
+    &-btns 
+      justify-self: center
+
+    &-subtitle 
+      text-align: center
+
+    &_main &-content 
+      grid-template-columns: 1fr
+
+    &_main &__title 
+      text-align: center
+      max-width: 840px
+      margin: 0 auto 30px
+
+    &_bp &__title,
+    &_bp &__subtitle 
+      text-align: center
+      max-width: 100%
+    
+    &_bg &__subtitle 
+      text-align: center
+      max-width: 100%
+    
+    &_bt &-content 
+      grid-template-rows: initial
+    
+
+@media screen and ( max-width: 768px )
+  .hero
+    &-title 
+      font-size: 48px
+      text-align: center
+
+    &-subtitle 
+      font-size: 18px
+    
+
+@media screen and ( max-width:  576px)
+  .hero
+    &-video__body 
+      height: 250px
+
+@media screen and ( max-width: 450px )
+  .hero
+    &__container 
+      min-height: initial
+
+    &-video__body 
+      height: 200px
+
+    &-btns 
+      flex-direction: column
+      justify-self: start
+      width: 100%
+
+    &-btn 
+      width: initial
+      max-width: initial
+
+    &-title 
+      font-size: 38px
+
+    &-btn 
+      font-size: 14px
+    

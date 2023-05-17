@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'ClioCBlack-Black';
+  src: url('ClioCBlack-Black.eot');
+  src: url('ClioCBlack-Black.eot?#iefix') format('embedded-opentype'),
+       url('ClioCBlack-Black.svg#ClioCBlack-Black') format('svg'),
+       url('ClioCBlack-Black.ttf') format('truetype'),
+       url('ClioCBlack-Black.woff') format('woff'),
+       url('ClioCBlack-Black.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+

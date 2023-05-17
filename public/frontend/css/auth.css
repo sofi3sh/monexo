@@ -1,0 +1,253 @@
+.return_on_website {
+	margin: 0px;
+	padding: 10px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	z-index: 99;
+}
+.return_on_website a {
+	font-size: 18px;
+	font-weight: 500;
+	font-family: "Fira Sans", sans-serif;
+
+	color: #515151;
+
+	transition: all .5s ease;
+}
+.return_on_website a:hover {
+	color: #000;
+}
+
+.language_select {
+    width: auto;
+    min-width: 140px;
+
+    padding: 10px;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+
+    position: absolute;
+    z-index: 99;
+    right: 0px;
+    top: 0px;
+}
+.language_select h2 {
+    font-size: 20px;
+    font-weight: 500;
+    font-family: "Fira Sans", sans-serif;
+}
+.language_select .language {
+    width: 100%;
+
+    margin: 0px;
+    padding: 0px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+.language_select .language .active,
+.language_select .language strong,
+.language_select .language a {
+    font-size: 18px;
+    font-weight: 600;
+
+    font-family: "Fira Sans", sans-serif;
+
+    padding: 0px 2px;
+
+    color: #000;
+}
+.language_select .language .active {
+    border-bottom: 1px solid #000;
+}
+.language_select .language a {
+    font-weight: 500;
+    color: #363636;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+}
+
+
+.main_auth {
+	width: 100%;
+	min-height: 100vh;
+	height: 100%;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	position: relative;
+	z-index: 1;
+}
+.main_auth .content {
+	max-width: 480px;
+	width: 100%;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.main_auth .content .logo {
+	margin: 0px 0px 10px 0px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.main_auth .content .title {
+	width: 100%;
+
+	margin: 10px 0px 20px 0px;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+}
+.main_auth .content .title h2 {
+	font-size: 46px;
+	font-weight: 600;
+	font-family: "Fira Sans", sans-serif;
+
+	text-align: center;
+	text-transform: uppercase;
+
+	color: #000000;
+}
+.main_auth .content .title small {
+	font-size: 18px;
+	font-weight: 500;
+	font-family: "Fira Sans", sans-serif;
+
+	text-align: center;
+
+	color: #282828;
+}
+
+.main_auth .content .form {
+	width: 100%;
+
+	margin: 0px 0px 10px 0px;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+}
+.main_auth .content .form .block {
+	width: 100%;
+
+	margin: 0px 0px 10px 0px;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+.main_auth .content .form .block label {
+	font-size: 16px;
+	font-weight: 500;
+	font-family: "Fira Sans", sans-serif;
+
+}
+.main_auth .content .form .block input {
+	width: 100%;
+
+	font-size: 16px;
+	font-weight: 500;
+	font-family: "Fira Sans", sans-serif;
+
+	margin: 0px;
+	padding: 8px 20px 8px 0px;
+
+	background: none;
+	border: none;
+	border-bottom: 2px solid #282828;
+
+	outline: none;
+}
+.main_auth .content .form .block button {
+	min-width: 200px;
+
+	font-size: 16px;
+	font-weight: 500;
+	font-family: "Fira Sans", sans-serif;
+
+	margin: 30px auto 10px;
+	padding: 10px 12px;
+
+	color: #fff;
+	background: #000000;
+
+	border: 2px solid #000;
+	border-radius: 50px;
+
+	outline: none;
+	transition: all .5s ease;
+}
+.main_auth .content .form .block button:hover {
+	color: #000;
+	background: none;
+}
+.main_auth .content .form .block span.invalid-feedback {
+	width: 100%;
+	
+    margin: 0px;
+	padding: 0px;
+	
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.main_auth .content .form .block span.invalid-feedback strong {
+    font-size: 14px;
+	font-weight: 500;
+	
+    color: #cf0000;
+}
+
+.main_auth .content .small_link {
+	width: 100%;
+
+	margin: 0px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.main_auth .content .small_link.sign_up {
+	margin: 0px 0px 40px;
+}
+.main_auth .content .small_link.forgot_password {
+	margin: 20px 0px 0px;
+}
+.main_auth .content .small_link h5,
+.main_auth .content .small_link a {
+	font-size: 15px;
+	font-weight: 400;
+	font-family: "Fira Sans", sans-serif;
+
+	color: #484848;
+}
+.main_auth .content .small_link a {
+	font-weight: 600;
+
+	margin: 0px 0px 0px 5px;
+
+	color: #000;
+}

@@ -1,0 +1,36 @@
+{
+  "name": "dok5/lang-switcher",
+  "description": "Laravel Language switch.",
+  "keywords": [
+    "dok5",
+    "laravel",
+    "localization"
+  ],
+  "license": "MIT",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Dok5",
+      "email": "dok112@protonmail.com",
+      "homepage": ""
+    }
+  ],
+  "require": {},
+  "require-dev": {},
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Dok5\\LangSwitcher\\LangSwitcherServiceProvider"
+      ]
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Dok5\\LangSwitcher\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {}
+  },
+  "minimum-stability": "dev"
+}

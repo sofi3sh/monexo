@@ -1,0 +1,287 @@
+@media only screen and (max-width : 1680px) {
+    .main-statistic .mst-content .mst-chart {
+		right: 0;
+	}
+
+}
+@media only screen and (max-width : 1580px) {
+    .main-statistic .mst-title h3 {
+		font-size: 20px;
+	}
+	.main-statistic .mst-content .mst-sum p {
+		width: 85%;
+		font-size: 22px;
+	}
+
+	.main-statistic .mst-content .mst-chart {
+		right: -6px;
+	}
+}
+@media only screen and (max-width : 1440px) {
+	.mmr-block .mmr-content .mmr-month h2 {
+		font-size: 28px;
+	}
+	.mmr-block .mmr-content .mmr-title p {
+		font-size: 16px;
+	}
+	.mmr-block .mmr-content .mmr-link a {
+		font-size: 14px;
+	}
+
+	.mln-block .mln-info .mln-title h2 {
+		font-size: 16px;
+	}
+}
+@media only screen and (max-width : 1366px) {
+    .main-statistic .mst-title h3 {
+		font-size: 18px;
+	}
+	.main-statistic .mst-content .mst-sum p {
+		width: 85%;
+		font-size: 18px;
+	}
+
+	/* Блок с ссылкой */
+	.referal-link__link {
+		font-size: 20px;
+	}
+
+	/* Блок "Поделиться" */
+	.lwl-share {
+		min-width: 160px;
+		max-width: 160px;
+	}
+	.lwl-share--link {
+		padding: 45px 0px 0px;
+	}
+	.lwl-share--link a {
+		width: 35px;
+		height: 35px;
+	}
+}
+@media screen and (max-width: 1360px) {
+	/* Base blocks */
+	.content--blocks-wrapper.cbw-col {
+		flex-direction: column;
+	}
+    .content--blocks-wrapper .bw--wrapper-md {
+        max-width: 540px;
+		width: 100%;
+    }
+	.content--blocks-wrapper.cbw-col .bw--wrapper-md {
+        margin: 10px auto !important;
+    }
+    .content--blocks-wrapper .bw--wrapper-sml {
+		max-width: 320px;
+		
+		margin: 10px auto !important;
+	}
+}
+@media screen and (max-width: 1280px) {
+    /* Referal */
+	.referal-link_wrapper h3 {
+		font-size: 20px;
+	}
+
+	/* Блок с ссылкой */
+	.referal-link__link {
+		font-size: 16px;
+	}
+
+	/* Блок "Поделиться" */
+	.lwl-share {
+		min-width: 140px;
+		max-width: 140px;
+	}
+
+	/* Правый блок */
+	.link_wrapper-right:before {
+		left: 0px;
+    }
+}
+@media only screen and (max-width : 1200px) {
+
+	.gr-content {
+		max-width: 100%;
+		background: rgba(255, 255, 255, 0.5);
+		border-radius: 5px;
+	}
+
+	/* Ref */
+	.referal-link_wrapper {
+		padding: 0 10px 10px;
+
+	    -webkit-flex-direction: column;
+	    -moz-flex-direction: column;
+	    -ms-flex-direction: column;
+	    -o-flex-direction: column;
+	    flex-direction: column;
+	    justify-content: flex-start;
+    }
+
+	/* Правый блок */
+	.link_wrapper-right {
+		min-width: 100%;
+		max-width: 100%;
+
+		padding: 0 10px 10px;
+	}
+	.link_wrapper-right:before {
+		display: none;
+	}
+}
+/* Medium Devices, Desktops */
+@media only screen and (max-width : 992px) {
+	.cabinet-menu {
+		left: -320px;
+
+		padding-top: 60px;
+
+		transition: all .5s ease;
+	}
+	.cabinet-menu.active {
+		left: 0px;
+	}
+	.content {
+		padding: 10px;
+	}
+	.cabinet-mobile-menu {
+		display: flex;
+	}
+	
+	.mmr-block .mmr-content .mmr-month h2 {
+		font-size: 24px;
+	}
+	.mmr-block .mmr-content .mmr-title p {
+		font-size: 12px;
+	}
+	.mmr-block .mmr-content .mmr-link a {
+		font-size: 12px;
+	}
+
+	/* Block style */
+	.mp-user-balans {
+		flex-direction: column;
+		position: relative;
+		padding: 10px 20px 60px 20px !important;
+	}
+	.mp-user-balans .ub-deposit {
+		width: 90%;
+		position: absolute;
+		bottom: 10px;
+		left: 5%;
+	}
+	.mp-user-balans .user-balans--chart {
+		margin: auto;
+	}
+
+	/* Реферальная ссылка */
+	.referal-link_wrapper h3 {
+		font-size: 22px;
+	}
+
+	/* Блок с ссылкой */
+	.referal-link__link {
+	    font-size: 20px;
+    }
+}
+
+
+@media only screen and (max-width : 680px) {
+	/* Новая реферальная ссылка */
+	.link_wrapper-left {
+	    -webkit-flex-direction: column;
+	    -moz-flex-direction: column;
+	    -ms-flex-direction: column;
+	    -o-flex-direction: column;
+	    flex-direction: column;
+	}
+	.lwl-info,
+	.lwl-share {
+	    min-width: 100%;
+	    max-width: 100%;
+	    width: 100%;
+	}
+	.referal-link__block {
+		-webkit-flex-wrap: wrap;
+		-moz-flex-wrap: wrap;
+		-ms-flex-wrap: wrap;
+		-o-flex-wrap: wrap;
+		flex-wrap: wrap;
+	}
+	.lwl-share {
+	    padding: 10px 0;
+
+	    -webkit-flex-direction: row;
+	    -moz-flex-direction: row;
+	    -ms-flex-direction: row;
+	    -o-flex-direction: row;
+	    flex-direction: row;
+	    -ms-align-items: flex-start;
+	    align-items: flex-start;
+	}
+	.lwl-share--link {
+	    width: auto;
+
+	    padding: 0;
+
+	    justify-content: flex-start;
+	}
+}
+
+@media only screen and (max-width:480px){
+	.main-statistic .mst-content {
+		margin: 10px 0;
+		flex-direction: column;
+	}
+	
+	.main-statistic .mst-content .mst-sum {
+		width: 100%;
+	}
+	
+	.main-statistic .mst-content .mst-chart {
+		right: 0;
+		top: 10px;
+	}
+
+	.main-statistic .mst-invested::after, .main-statistic .mst-available::after, .main-statistic .mst-withdrawal::after {
+		height: 135px;
+		width: 100%;
+		top: unset;
+		right: 0;
+		bottom: -65px;
+		transform: rotate(0deg);
+	}
+	
+	.main-statistic .mst-content .mst-sum p {
+		width: 100%;
+	}
+
+	.mln-block.bw--wrapper-md {
+		padding: 220px 0px 0px 0px;
+		flex-direction: column;
+	}
+	
+	.mln-block .mln-thumbnail {
+		min-width: 100%;
+		max-width: 100%;
+		height: 220px;
+	}
+
+	.mmr-block .mmr-content .mmr-title p {
+		font-size: 16px;
+	}
+	.mmr-block .mmr-content .mmr-link a {
+		font-size: 14px;
+	}
+
+	/* Новая реферальная ссылка */
+	.referal-link__link {
+	    font-size: 16px;
+	}
+}
+@media only screen and (max-width:360px) {
+	.content {
+		padding: 10px 5px 10px 5px;
+	}
+}

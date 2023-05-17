@@ -1,0 +1,59 @@
+.faq
+    &__title
+        color: var(--color-midnight)
+        text-align: center
+        margin-bottom: 60px
+        +sm-block
+            text-align: left
+    &-btns
+        display: flex
+        justify-content: center
+        margin-top: 30px
+    &__btn
+        font-size: 16px
+        &:not(:first-child)
+            margin-left: 30px
+            
+.questions
+    &__item
+        border: 2px solid transparent
+        border-radius: 36px
+        &:not(:last-child)
+            margin-bottom: 20px
+        &.active
+            border: 2px solid var(--hawkes-blue)
+            border-top: 2px solid transparent
+            .question__arrow
+                transform: rotate(180deg)
+
+.question
+    display: flex
+    align-items: center
+    cursor: pointer
+    background-color: var(--hawkes-blue)
+    padding: 21px 40px
+    border-radius: 36px
+    position: relative
+    +sm-block
+        padding: 22px 20px
+        padding-right: 40px
+    &__arrow
+        position: absolute
+        right: 60px
+        transform-origin: center
+        transition: transform .3s
+        +sm-block
+            right: 20px
+    
+
+.answer
+    height: 0
+    overflow: hidden
+    transition: height .3s
+    &__container
+        padding: 20px 40px
+        line-height: 22px
+        +sm-block
+            padding: 20px
+        
+

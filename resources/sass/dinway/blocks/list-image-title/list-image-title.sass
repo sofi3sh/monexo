@@ -1,0 +1,75 @@
+.list-image-title
+
+    &__container
+        position: relative
+        display: grid
+        grid-gap: 30px
+        grid-template-areas: "title img" "list img"
+        grid-template-columns: 1fr max-content
+        grid-template-rows: min-content, max-content
+        align-items: center
+        overflow: hidden
+
+        +bp1050-block
+            grid-template-columns: max-content 1fr
+            grid-template-areas: "title title" "list img"
+            
+        +bp900-block
+            grid-template-columns: 1fr
+            grid-template-areas: "title" "list" "img"
+
+    &.reverse .list-image-title__container
+        
+        grid-template-columns: 1fr 1fr
+        grid-template-areas: "img title"  "img list"
+
+        +bp1050-block
+            grid-template-columns: 1fr max-content 
+            grid-template-areas: "title title" "img list"
+
+        +bp900-block
+            grid-template-columns: 1fr
+            grid-template-areas: "title" "list" "img"
+
+    &__title
+        word-break: break-word
+        grid-area: title
+
+        +bp1050-block
+            position: static
+            width: initial
+            justify-self: center
+
+    &__list
+        grid-area: list
+
+        +bp1050-block
+            justify-self: center
+
+    &__image
+        grid-area: img
+        align-self: center
+
+        +bp1050-block
+            justify-self: center
+
+.list-image-title-ul
+    display: grid
+    grid-gap: 30px
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+    align-self: start
+    &__item
+        display: grid
+        grid-gap: 14px
+        align-items: center
+        grid-template-columns: min-content 1fr
+
+    &__text
+        word-break: break-word
+        font-weight: bold
+        font-size: 18px
+        line-height: 140%
+        max-width: 320px
+
+    +bp900-block
+        justify-self: center

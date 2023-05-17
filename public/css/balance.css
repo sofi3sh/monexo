@@ -1,0 +1,23 @@
+.withdraw-errors {
+    font-size: 14px;
+    margin: 0;
+    margin-bottom: 5px;
+    padding: 0;
+    color: red;
+}
+
+.not_executed {
+    background-color: #F6F9FC;
+}
+
+.canceled {
+
+}
+
+.confirmed {
+
+}
+
+.success {
+
+}

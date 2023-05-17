@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'ClioCBoldIt-Bold';
+  src: url('ClioCBoldIt-Bold.eot');
+  src: url('ClioCBoldIt-Bold.eot?#iefix') format('embedded-opentype'),
+       url('ClioCBoldIt-Bold.svg#ClioCBoldIt-Bold') format('svg'),
+       url('ClioCBoldIt-Bold.ttf') format('truetype'),
+       url('ClioCBoldIt-Bold.woff') format('woff'),
+       url('ClioCBoldIt-Bold.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+

@@ -1,0 +1,44 @@
+.quotes
+    text-align: center
+
+    &__container
+        display: flex
+        justify-content: center
+        padding-top: 30px
+        padding-bottom: 30px
+
+    &__content
+        position: relative
+        max-width: 600px
+        z-index: 1
+        padding: 30px 0
+        margin: 80px auto
+        align-self: center
+        border-top: 1px solid 
+        border-bottom: 1px solid 
+        color: var(--color-blue)
+        font-size: 40px
+        line-height: 1
+        margin: 0
+        +xs-block
+            font-size: 36px
+
+        &:after
+            content: "”"
+            position: absolute
+            color: var(--color-orange)
+            font-size: 10rem
+            line-height: 0
+            bottom: -43px
+            right: 30px
+
+
+    &__author
+        position: relative
+        color: var(--color-blue)
+        font-size: 1.4rem
+        font-weight: normal
+        line-height: 1
+        margin: 0
+        padding-top: 20px
+        z-index: 1

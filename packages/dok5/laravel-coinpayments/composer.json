@@ -1,0 +1,36 @@
+{
+  "name": "dok5/laravel-coinpayments",
+  "description": "Laravel Coinpayments.",
+  "keywords": [
+    "dok5",
+    "laravel",
+    "referrals"
+  ],
+  "license": "MIT",
+  "version": "1.0.6",
+  "authors": [
+    {
+      "name": "Dok5",
+      "email": "dok112@protonmail.com",
+      "homepage": ""
+    }
+  ],
+  "require": {},
+  "require-dev": {},
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Dok5\\Coinpayments\\CoinpaymentsServiceProvider"
+      ]
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Dok5\\Coinpayments\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {}
+  },
+  "minimum-stability": "dev"
+}

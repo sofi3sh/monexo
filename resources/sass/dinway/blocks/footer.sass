@@ -1,0 +1,103 @@
+.footer
+  &__wave 
+    fill: var(--color-midnight)
+    display: block
+    margin-bottom: -10px
+  &__container
+    overflow: hidden
+    display: grid
+    grid-template-columns: 1fr 1fr
+    grid-gap: 20px
+    padding-top: 20px
+    align-items: center
+    +md-block
+      grid-template-columns: 1fr
+      text-align: center
+  &__title 
+    font-weight: 700
+    font-size: 36px
+    line-height: 43px
+    color: var(--color-white)
+    margin-bottom: 47px
+  &__social 
+    margin-bottom: 30px
+  &__desc 
+    color: var(--hawkes-blue)
+    font-size: 14px
+    font-weight: 300
+  &__desc > a 
+    font-weight: 700
+    line-height: 17px
+    text-decoration-line: underline
+    color: inherit
+  &-text 
+    align-self: end
+    margin-bottom: 30px
+  &-img 
+    justify-self: center
+    &__image 
+      width: 450px
+  &__body 
+    background-color: var(--color-midnight)
+    color: var(--color-white)
+    padding-bottom: 30px
+  &__social 
+    margin-bottom: 40px
+  &__desc 
+    color: var(--hawkes-blue)
+    font-size: 14px
+    font-weight: 300
+    > a 
+      font-weight: 700
+      line-height: 17px
+      text-decoration-line: underline
+      color: inherit
+  &__consultation
+    display: inline-block
+    margin-bottom: 30px
+    border: 1px solid var(--color-white)
+    color: var(--color-white)
+    &:hover
+      background-color: var(--color-white)
+      color: var(--color-black)
+
+.footer-menu
+  +md-block
+    display: none
+  &__lists
+    +row-flex
+    justify-content: space-between
+    margin-bottom: 15px
+  &__icon
+    margin-right: 7px
+    transition: fill .3s
+  &-list
+    +col
+    font-size: 20px
+    &__item
+      position: relative
+      margin-bottom: 15px
+      display: flex
+      align-items: center
+      &:hover
+        > a
+          color: var(--color-orange)
+          &::before
+            content: ''
+            position: absolute
+            top: 0
+            left: 0
+            bottom: 0
+            right: 0
+        .footer-menu__icon
+          fill: var(--color-orange)
+      > a
+        transition: color .3s
+        text-decoration: none
+        color: var(--color-white)
+          
+
+
+
+  
+    

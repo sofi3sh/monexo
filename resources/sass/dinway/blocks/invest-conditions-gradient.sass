@@ -1,0 +1,103 @@
+.invest-conditions
+    display: grid
+    grid-gap: 40px
+    justify-content: center
+    grid-template-columns: repeat(2, minmax(320px, 400px))
+    
+    @media screen and (max-width: 1205px) 
+        max-width: 400px
+        margin: 0 auto
+
+    @media screen and (max-width: 450px) 
+        grid-template-columns: 1fr
+
+.invest-condition 
+    display: flex
+    flex-direction: column
+    text-align: center
+
+    &-top 
+        border-radius: 30px
+        padding-bottom: 16px
+        margin-bottom: 20px
+
+        &__title 
+            text-transform: uppercase
+            font-weight: 700
+            font-size: 22px
+            padding: 8px 10px
+            background-color: var(--color-white)
+            border-radius: 30px
+            margin-bottom: 14px
+
+        &__text-percent 
+            display: block
+            font-weight: 700
+            font-size: 52px
+            color: var(--color-white)
+
+        &__text-time 
+            font-weight: 700
+            color: var(--color-white)
+            margin-bottom: 12px
+
+        &__text-profit 
+            line-height: 20px
+            color: rgba(255, 255, 255, 0.7)
+
+    &-bottom 
+        background-color: var(--color-white)
+        border-radius: 25px
+        
+        &__title 
+            margin-top: 30px
+            font-weight: 700
+            font-size: 18px
+            margin-bottom: 20px
+
+        &-list 
+            padding: 0 20px
+            text-align: left
+            margin-bottom: 20px
+            line-height: 120%
+
+            &__item 
+                display: flex
+                align-items: center
+
+                &:not(:last-child) 
+                    margin-bottom: 10px
+
+            &__text 
+                flex-grow: 1
+                margin-left: 5px
+
+        &__period 
+            text-transform: uppercase
+            font-size: 16px
+            color: var(--color-white)
+            padding: 12px 0
+            margin-bottom: 30px
+
+        &__btn 
+            display: inline-block
+            margin-bottom: 30px
+            text-decoration: none
+            color: var(--color-blue)
+            max-width: 90%
+
+.invest-condition
+    &--1 .invest-condition-top, &--1 .invest-condition-bottom__period
+        background: linear-gradient(to right, #f46b45, #eea849)
+    &--2 .invest-condition-top, &--3 .invest-condition-bottom__period
+        background: linear-gradient(to right, #155799, #159957)
+    &--3 .invest-condition-top, &--2 .invest-condition-bottom__period
+        background: linear-gradient(to right, #de6161, #2657eb)
+    &--4 .invest-condition-top, &--4 .invest-condition-bottom__period
+        background: linear-gradient(to right, #e9d362, #333333)
+
+
+
+
+
+

@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('Ubuntu.svg#Ubuntu') format('svg'),
+       url('Ubuntu.ttf') format('truetype'),
+       url('Ubuntu.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ubuntu_[allfont.ru]';
+  src: url('ubuntu_[allfont.ru].eot');
+  src: url('ubuntu_[allfont.ru].eot?#iefix') format('embedded-opentype'),
+       url('ubuntu_[allfont.ru].woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+

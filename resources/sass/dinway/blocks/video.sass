@@ -1,0 +1,108 @@
+.video-block 
+    border: 2px solid var(--color-orange)
+    border-radius: 10px
+    height: 100%
+    width: 100%
+    overflow: hidden
+    &.active 
+        border: 2px solid var(--color-orange)
+        overflow: auto
+        max-height: 90%
+        width: 90%
+        max-width: 800px
+        max-height: 500px
+        z-index: 100
+        position: fixed
+        top: 50%
+        left: 50%
+        transform: translate(-50%, -50%)
+        
+        +sm-block
+            max-height: 300px
+        
+        +xs-block
+            max-height: 200px
+        
+        &__close 
+            display: block
+        
+        .video 
+            min-height: 500px
+            +sm-block
+                min-height: 300px
+            
+            +xs-block
+                min-height: 200px
+    &__close 
+        display: none
+        cursor: pointer
+        stroke: var(--color-white)
+        z-index: 100
+        position: absolute
+        right: 5px
+        top: 10px
+        transition: transform .3s
+        &:hover 
+            transform: scale(1.2)
+        
+.video 
+    position: relative
+    overflow: hidden
+    
+    &__embed 
+        width: 100%
+        height: 100%
+
+    &__link 
+        position: absolute
+        top: 0
+        left: 0
+        right: 0
+        bottom: 0
+
+
+    &__media 
+        position: absolute
+        top: 0
+        left: 0
+        height: 100%
+        width: 100%
+        border: none
+
+
+    &__button 
+        position: absolute
+        top: 50%
+        left: 50%
+        z-index: 1
+        display: none
+        padding: 0
+        width: 68px
+        height: 48px
+        border: none
+        background-color: transparent
+        transform: translate(-50%, -50%)
+        cursor: pointer
+
+        &-shape 
+            fill: #212121
+            fill-opacity: 0.8
+
+        &-icon 
+            fill: #ffffff
+
+        &:focus 
+            outline: none
+
+    &:hover .video__button-shape,
+    &__button:focus .video__button-shape 
+        fill: #ff0000
+        fill-opacity: 1
+
+
+/* Enabled */
+
+.video--enabled 
+    cursor: pointer
+    .video__button 
+        display: block

@@ -1,0 +1,181 @@
+.modal
+
+  &__overlay 
+    position: fixed
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background: rgba(0,0,0,0.6)
+    display: flex
+    justify-content: center
+    align-items: center
+    z-index: 2000000000000
+
+  &__container 
+    background-color: #fff
+    box-sizing: border-box
+    position: relative
+    border-radius: 20px
+    padding: 35px
+    width: 95%
+    max-width: 600px
+    max-height: 90%
+    overflow: auto
+    
+    +sm-block
+      height: auto
+
+    &--big
+      max-width: 1450px
+
+    +xs-block
+      padding: 20px
+
+  &__header 
+    display: flex
+    justify-content: space-between
+    align-items: center
+    flex-wrap: wrap
+    margin-bottom: 30px
+
+  &__title 
+    font-size: 22px
+    line-height: 1.25
+    text-align: center
+    margin: 0 auto
+    padding-right: 20px
+    font-weight: 700
+    color: var(--color-black)
+
+
+  &__close 
+    position: absolute
+    cursor: pointer
+    top: 20px
+    right: 20px
+    font-size: 20px
+    background: transparent
+    border: none
+    color: var(--color-black)
+
+  &__header .modal__close:before  
+    content: "\2715" 
+
+  &__content 
+    overflow: auto
+    max-height: 500px
+
+  &__body
+    font-size: 16px
+
+  &__label
+    font-weight: 300
+    font-size: 18px
+    &-title
+        font-weight: 700
+        color: var(--color-black)
+        margin-bottom: 15px
+
+  &__input
+    display: block
+    border: none
+    border-bottom: 1px solid var(--color-black)
+    margin-bottom: 20px
+    width: 100%
+    padding: 5px
+    font-size: 18px
+
+  &__btn 
+    font-size: .875rem
+    padding: .5rem 1rem
+    background-color: #e6e6e6
+    color: rgba(0,0,0,.8)
+    border-radius: .25rem
+    border: none
+    cursor: pointer
+    text-transform: none
+    overflow: visible
+    line-height: 1.15
+    margin: 0
+    will-change: transform
+    backface-visibility: hidden
+    transform: translateZ(0)
+    transition: transform .25s ease-out
+    display: block
+    max-width: 300px
+    margin: 0 auto
+
+  &__btn:focus, 
+  &__btn:hover 
+    transform: scale(1.05)
+
+  &__btn-primary 
+    background-color: #00449e
+    color: #fff
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+@keyframes mmfadeIn 
+  from  
+    opacity: 0 
+  to  
+    opacity: 1 
+
+
+@keyframes mmfadeOut 
+  from  
+    opacity: 1 
+  to  
+    opacity: 0 
+
+
+@keyframes mmslideIn 
+  from  
+    transform: translateY(15%) 
+  to  
+    transform: translateY(0) 
+
+
+@keyframes mmslideOut 
+  from  
+    transform: translateY(0) 
+  to
+    transform: translateY(-10%) 
+
+
+.micromodal-slide 
+  display: none
+  &.is-open 
+    display: block
+
+  &[aria-hidden="false"] .modal__overlay 
+    animation: mmfadeIn .3s cubic-bezier(0.0, 0.0, 0.2, 1)
+
+  &[aria-hidden="false"] .modal__container 
+    animation: mmslideIn .3s cubic-bezier(0, 0, .2, 1)
+
+  &[aria-hidden="true"] .modal__overlay 
+    animation: mmfadeOut .3s cubic-bezier(0.0, 0.0, 0.2, 1)
+
+  &[aria-hidden="true"] .modal__container 
+    animation: mmslideOut .3s cubic-bezier(0, 0, .2, 1)
+
+  & .modal__container,
+  & .modal__overlay 
+    will-change: transform

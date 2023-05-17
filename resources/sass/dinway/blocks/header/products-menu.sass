@@ -1,0 +1,94 @@
+.products-menu
+    background-color: var(--color-blue)
+    padding: 9px 0
+    text-align: center
+
+    @media screen and (max-width: 830px)
+        position: fixed
+        top: 0
+        right: 0
+        display: flex
+        overflow: auto
+        z-index: 20000000
+        width: 300px
+        height: 100vh
+        padding: 0
+        transform: scaleX(0)
+        background-color: var(--hawkes-blue)
+        transform-origin: right
+        transition: transform .5s, opacity .5s
+        opacity: 0
+
+    &__container
+        max-width: 1274px
+        margin: 0 auto
+        overflow: hidden
+        @media screen and (max-width: 830px)
+            margin: auto
+
+.nav-list
+    display: flex
+    flex-wrap: wrap
+    justify-content: space-around
+    text-align: center
+    margin-bottom: -10px
+    
+    +lg-block
+        font-size: 14px
+
+    @media screen and (max-width: 830px)
+        text-align: right
+        flex-direction: column
+        font-size: 16px
+
+    &__icon
+        margin-right: 5px
+        transition: fill .3s
+        
+    &__item
+        position: relative
+        margin: 0 10px 10px
+        display: flex
+        align-items: center
+        white-space: nowrap
+
+        @media screen and (max-width: 830px)
+            margin: 0 0 16px
+            justify-content: flex-end
+
+        &:hover
+
+            .nav-list__icon
+                fill: var(--color-orange)
+            > a
+                color: var(--color-orange)
+
+        &--products-end
+
+            @media screen and (max-width: 830px)
+                margin-bottom: 30px
+
+        > a
+            font-size: 18px
+            color: var(--color-white)
+            transition: color .3s
+            
+            +lg-block
+                font-size: 14px
+
+            &::before
+                content: ''
+                position: absolute
+                top: 0
+                left: 0
+                right: 0
+                bottom: 0
+
+            @media screen and (max-width: 830px)
+                font-size: 22px
+                color: var(--color-black)
+
+        &--md
+            display: none
+            @media screen and (max-width: 830px)
+                display: block

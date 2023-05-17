@@ -1,0 +1,35 @@
+.image-text
+    display: grid
+    grid-gap: 30px
+    align-items: center
+    padding: 20px 0
+    &--img5-txt7
+        grid-template-areas: "image image image image text text text text text text text"
+    +lg-block
+        grid-template-areas: "image image image image image text text text text text text" 
+    +md-block
+        grid-template-areas: "image" "text"
+    &.reverse
+        .image-text
+            &__image
+                grid-area: text
+                +md-block
+                    grid-area: image
+            &__text
+                grid-area: image
+                +md-block
+                    grid-area: text
+
+    &__image
+        grid-area: image
+        +md-block
+            justify-self: center
+
+    &__text
+        grid-area: text
+        > p
+            line-height: 1.4
+            &:not(:last-child)
+                margin-bottom: 10px
+
+    

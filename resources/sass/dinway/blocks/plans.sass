@@ -1,0 +1,142 @@
+.plans
+  overflow: hidden
+  
+  &__container 
+    display: grid
+    grid-template-areas: "title title title" "item1 item2 item3"
+    grid-template-columns: 1fr 1.5fr 1fr
+    align-items: center
+    overflow: hidden
+
+    +bp900-block
+      grid-template-areas: "title title" "item1 item2" "item3 item2"
+      grid-template-columns: minmax(300px, 1fr) 1.5fr
+      grid-column-gap: 30px
+
+    +xs-block
+      grid-template-areas: "title item2" "item1 item1" "item3 item3"
+      grid-template-columns: 3fr 1fr
+      padding-top: 30px
+      padding-bottom: 30px
+
+
+  &__title 
+    text-align: center
+    grid-area: title
+    margin-bottom: 50px
+    
+    +sm-block
+      text-align: left !important
+
+    +xs-block
+      text-align: left
+      align-self: center
+      margin-bottom: 0
+
+    @media screen and ( max-width: 350px )
+      max-width: 190px
+      font-size: 26px      
+  
+.plans-col
+  
+  &--1 
+    grid-area: item1
+    max-width: 300px
+    
+    +bp900-block
+      grid-area: item1
+      min-width: 100%
+
+    +xs-block
+      padding-top: 30px
+
+    .plans-col
+      
+      &__item
+
+        +bp900-block
+          flex-direction: row-reverse
+
+        &-nums 
+          text-align: right
+          +bp900-block
+            flex-grow: 9999
+            text-align: left
+            width: initial
+            max-width: initial
+
+        &-text 
+          text-align: right
+          margin-right: 15px
+          width: 200px
+          +bp900-block
+            margin-right: 0
+            width: 170px
+            text-align: left 
+  
+  &--2
+    position: relative
+    z-index: -1
+    grid-area: item2
+    justify-self: center
+
+  &--3 
+    grid-area: item3
+    
+    .plans-col__item
+
+      &-nums 
+        margin-right: 15px
+        
+        +bp900-block
+          margin-right: 0
+
+      &-text 
+        width: 200px
+        
+        +bp900-block
+          text-align: left
+          width: 170px
+        
+
+
+.plans-col
+
+  &__item 
+    display: flex
+    align-items: center
+    
+    +bp900-block
+      justify-content: space-between
+
+  &__title 
+    min-width: 100px
+    font-size: 24px
+
+  &__subtitle 
+    font-size: 18px
+
+  &__num 
+    color: var(--hawkes-blue)
+    font-weight: 700
+    font-size: 82px
+
+.plans-img 
+  position: relative
+  
+  > img
+    
+    +bp900-block
+      z-index: -1
+      position: absolute
+      top: 50%
+      left: -250px
+      transform: translateY(-50%)
+      min-width: 500px
+    
+    +xs-block
+      left: -120px
+      min-width: 200px
+
+    
+        

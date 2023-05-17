@@ -1,0 +1,266 @@
+﻿@media screen and (max-width: 1300px) {
+    #header .control.top_menu_control {
+        display: flex;
+    }
+
+    #header .top_menu {
+        max-width: 320px;
+        width: 100%;
+        height: 100vh;
+
+        padding: 67px 10px 10px 10px;
+
+        background: #fff;
+        border-left: 1px solid #c0c0c0;
+
+        display: flex;
+        flex-direction: column;
+
+        transition: all .5s ease;
+
+        right: -340px;
+    }
+    #header .top_menu.active {
+        right: 0px;
+    }
+
+    #header .top_menu .control_panel .panel_bar {
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    #header .top_menu .control_panel .panel_bar .exit {
+        margin: 0px;
+    }
+    #header .top_menu .control_panel .panel_bar .support,
+    #header .top_menu .control_panel .panel_bar .language,
+    #header .top_menu .control_panel .panel_bar .user_account {
+        margin: 0px 0px 10px 0px;
+    }
+
+    #header .top_menu .control_panel .panel_bar .support {
+        display: none;
+    }
+
+    #header .left_menu.active,
+    #header .top_menu.active {
+        z-index: 101;
+    }
+    #header .control.left_menu_control.active,
+    #header .control.top_menu_control.active {
+        z-index: 102;
+    }
+
+    /* Main user data */
+    #main {
+        flex-wrap: wrap;
+        overflow-x: hidden;
+    }
+    
+    .main_user_data {
+        max-width: 100%;
+    }
+    .main_user_data .header .data {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .main_plan_and_statistic {
+        flex-wrap: wrap;
+    }
+    
+    .main_plan_about {
+        flex-wrap: wrap;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .main_referral_link {
+        flex-direction: column;
+    }
+    .main_referral_link .control::before {
+        display: none;
+    }
+    .main_referral_link .control {
+        padding: 0px;
+    }
+    .main_referral_link .control .content {
+        border-radius: 0px;
+    }
+
+    .main_plan .all_slides .slide {
+        flex-direction: column;
+    }
+    .main_plan .all_slides .slide .zone {
+        max-width: 100%;
+
+        padding: 10px;
+
+        border-radius: 0;
+    }
+    .main_plan .all_slides .slide .data::after {
+        width: 100%;
+
+        border-radius: 0;
+    }
+
+    .main_tabs_content .tabs_header .tabs_btn {
+        min-width: max-content;
+    }
+    .base-table table tbody tr {
+        max-height: 100%;
+        min-height: auto;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .base-table table tbody tr td {
+        width: 100%;
+        max-width: 100% !important;
+        max-height: 100%;
+        
+        padding: 5px 10px 5px;
+
+        justify-content: flex-end;
+    }
+    .base-table table tbody tr td::after {
+        width: 100%;
+        height: 1px;
+
+        position: absolute;
+        bottom: 0px;
+    }
+    .base-table table tbody tr td::before {
+        content: attr(aria-label);
+
+        position: absolute;
+        top: 5px;
+        left: 0px;
+    }
+    .base-table table tbody tr td span {
+        justify-content: flex-end;
+    }
+    .base-table table thead {
+        display: none;
+    }
+
+    form.base_form .control .info {
+        margin: 0px 0px 10px 0px;
+    }
+
+    .main_referrals .tabs_header {
+        padding-bottom: 60px;
+    }
+    .main_referrals .tabs_header .base_select {
+        right: unset;
+        left: 10px;
+        bottom: 11px;
+    }
+
+    /* 2.10 Calculator */
+    .main_calculator .content .data {
+        flex-direction: column-reverse;
+    }
+    .main_calculator .content .data .calculator {
+        max-width: 100%;
+        padding: 0px 10px;
+    }
+    .main_calculator .content .data .calculator .data_inputs {
+        flex-wrap: wrap;
+    }
+    .main_calculator .content .data .calculator .data_inputs .block {
+        max-width: 320px;
+        min-width: 300px;
+
+        margin: 0px;
+    }
+    .main_calculator .content .data .calculator .data_user_get .block:first-child {
+        min-width: 120px;
+    }
+    .main_calculator .content .data .image {
+        max-width: 100%;
+        border-radius: 0px 0px 3px 3px;
+    }
+    .main_calculator .content .data .image img {
+        max-width: 180px;
+    }
+    .main_calculator .content .data .image img.add_obj {
+        display: none;
+    }
+
+    /* 3. Footer */
+    .footer_contact .content {
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+    .footer_contact .content .block {
+        max-width: 100%;
+    }
+    .footer_contact .content .block.address {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .base_modal {
+        padding: 82px 5px;
+    }
+    
+    #header .left_menu {
+        width: 0px;
+    }
+    #header .control {
+        left: 10px;
+    }
+
+    #header .left_menu.active,
+    #header .top_menu.active {
+        z-index: 101;
+    }
+    #header .control.left_menu_control.active,
+    #header .control.top_menu_control.active {
+        z-index: 102;
+    }
+
+    #main {
+        padding: 70px 0px 20px;
+    }
+
+    .main_user_data .header .link {
+        margin-top: 20px;
+    }
+
+    .main_statistic {
+        max-width: 100%;
+    }
+
+    .main_tabs_content .tabs_header {
+        flex-direction: column;
+    }
+    .main_tabs_content .tabs_header::-webkit-scrollbar {
+        display: none;
+    }
+    .main_tabs_content .tabs_header .tabs_btn {
+        min-width: max-content;
+    }
+
+    /* Рlan Deatailed */
+    .main_plan_detailed .plan_block {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    /* 2.10 Calculator */
+    .main_calculator .content .data .calculator .data_user_get {
+        flex-direction: column;
+    }
+    .main_calculator .content .data .calculator .data_user_get .block {
+        min-width: 90px;
+        width: 100%;
+    }
+}

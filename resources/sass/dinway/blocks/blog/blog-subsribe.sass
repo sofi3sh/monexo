@@ -1,0 +1,50 @@
+.news-subscription
+
+    &__container
+        display: flex
+        flex-direction: column
+        max-width: 1000px
+
+    &__content
+        display: grid
+        grid-template-columns: minmax(240px, 500px) minmax(290px, 1fr)
+        grid-column-gap: 25px
+        align-items: center
+        +bp620-block
+            grid-template-columns: 1fr
+
+
+.subscribe-form
+    padding: 30px 0
+    width: 100%
+    max-width: 750px
+
+    &__content
+        display: grid
+        grid-column-gap: 30px
+        grid-template-columns: 1fr max-content
+        margin-bottom: 5px
+    
+    &__text
+        display: block
+        margin-bottom: 10px
+    
+    &__input
+        width: 100%
+        padding: 10px 15px
+        border-radius: 25px
+        font-size: 16px
+        border: 1px solid var(--color-blue)
+        transition: border .3s
+
+        &:focus
+            outline: none
+                     
+
+    &__btns
+        align-self: end
+
+
+
+    // &__btns
+

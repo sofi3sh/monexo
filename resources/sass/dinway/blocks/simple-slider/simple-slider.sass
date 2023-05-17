@@ -1,0 +1,59 @@
+@import './simple-slider-blocks-settings'
+.simple-slider
+    margin-bottom: 100px
+    +bp900-block
+        margin-bottom: 0
+    +sm-block
+        margin-top: 60px
+    &__title
+        margin-bottom: 80px
+        text-align: center
+        +sm-block
+            text-align: left
+            margin-bottom: 40px
+            padding-right: 15px
+    &__container
+        overflow: hidden
+        +sm-block
+            padding-right: 0 !important
+    &-slider
+        position: relative
+        padding: 0 20px
+        +md-block
+            padding: 0 20px
+        +sm-block
+            padding: 0
+        &__next, &__prev
+            cursor: pointer
+            position: absolute
+            top: 50%
+            transform: translateY(calc(-50% - 25px))
+            &:focus
+                outline: none
+            &.swiper-button-disabled
+                fill: gray
+            +sm-block
+                display: none
+        &__next
+            right: 0
+        &__prev
+            left: 0
+        &__slide-desc
+            color: rgba(130, 130, 130, 0.8)
+            font-style: normal
+            font-weight: 300
+            font-size: 14px
+            line-height: 17px
+            margin: 20px 0 5px
+        &__slide-title
+            font-style: normal
+            font-weight: normal
+            font-size: 16px
+            line-height: 120%
+
+.review
+    border-radius: 10px
+    height: 205px
+    overflow: hidden
+    +sm-block
+        height: 169px

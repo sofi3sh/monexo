@@ -1,0 +1,112 @@
+@import './_instractions-block-settings'
+
+.instraction
+    &__step
+        &:not(:last-child)
+            margin-bottom: 100px
+    
+.step
+    @media screen and ( max-width: 815px )
+        display: flex
+        flex-direction: column
+    &__header
+        display: flex
+        align-items: center
+        margin-bottom: 60px
+        +md-block
+            margin-bottom: 30px
+        +xs-block
+            flex-direction: column-reverse
+            align-items: start
+        &--4
+            margin-bottom: 0
+            +bp900-block
+                margin-bottom: 40px
+    &__title
+        font-weight: 700
+        font-size: 36px
+        line-height: 43px
+        margin-right: 40px
+        color: var(--color-blue)
+        +xs-block
+            margin: 15px 0 0
+        +sm-block
+            font-size: 30px
+        +xxs-block
+            font-size: 27px
+    &__info
+        width: 160px
+        text-align: center
+    &__step-blocks
+        margin-bottom: 59px
+    &-blocks
+        display: grid
+        grid-gap: 40px
+        grid-template-columns: repeat(3, 1fr)
+        @media screen and ( max-width: 815px )
+            grid-template-columns: 1fr 1fr
+        +xs-block
+            grid-template-columns: 1fr
+    &-card
+        text-align: center
+        &--2
+            @media screen and ( max-width: 815px )
+                grid-row: 1/3
+                align-self: center
+            +xs-block
+                grid-row: initial
+                align-self: start
+        &__title
+            font-size: 16px
+            line-height: 120%
+            max-width: 240px
+            margin: 0 auto 20px
+        &__image
+            height: 249px  
+            border-radius: 30px
+            background-color: var(--hawkes-blue)
+            img
+                max-height: 100%
+            @media screen and ( max-width: 1200px )
+                height: 159px
+            @media screen and ( max-width: 815px )
+                height: max-content
+    &__btn
+        display: inline-block
+        font-size: 16px
+        padding: 20px 50px
+    &-btns
+        display: flex
+        align-items: center
+        @media screen and ( max-width: 815px )
+            flex-direction: column
+            margin: 0 auto
+        &__info
+            margin-left: 20px
+            display: flex
+            align-items: center
+            @media screen and ( max-width: 815px )
+                margin: 20px 0 0
+                text-align: center
+        &__info-text
+            margin-left: 8px
+            color: var(--color-midnight)
+        &__info-img
+            +xs-block
+                display: none
+
+.step-media
+    display: grid
+    grid-template-columns: 1fr 1fr
+    align-items: center
+    grid-gap: 42px
+    +bp900-block
+        grid-template-columns: 1fr
+        text-align: center
+    &-text
+        +bp900-block
+            order: 2
+        &__text
+            font-size: 18px
+            line-height: 140%
+            margin-bottom: 60px

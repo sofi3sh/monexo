@@ -1,0 +1,384 @@
+/* ======================================================================================
+*
+*				ONION STYLE SHEET CSS
+*	   			NEW FRAMEWORK: 0.0.1
+*	  															
+*
+* ==================================================================================== */
+/* ==================== FLEXBOX ==================== */
+.on-grid {
+display: -webkit-box;
+display: -webkit-flex;
+display: -moz-box;
+display: -ms-flexbox;
+display: flex;
+-webkit-flex-wrap: wrap;
+-ms-flex-wrap: wrap;
+flex-wrap: wrap;
+}
+/* ==================== FLEXBOX WRAP, NOWRAP, REVERSE ==================== */
+.on-wrap {
+-webkit-flex-wrap: wrap;
+-ms-flex-wrap: wrap;
+flex-wrap: wrap;
+}
+.on-wrap-reverse {
+-webkit-flex-wrap: wrap-reverse;
+-ms-flex-wrap: wrap-reverse;
+flex-wrap: wrap-reverse;
+}
+.on-nowrap {
+-webkit-flex-wrap: nowrap;
+-ms-flex-wrap: nowrap;
+flex-wrap: nowrap;
+}
+/* ==================== FLEXBOX ROW COLUMNS REVERSE ==================== */
+.on-row {
+-webkit-box-orient: horizontal;
+-webkit-box-direction: normal;
+-webkit-flex-direction: row;
+-moz-box-orient: horizontal;
+-moz-box-direction: normal;
+-ms-flex-direction: row;
+flex-direction: row;
+}
+.on-row-reverse {
+-webkit-box-orient: horizontal;
+-webkit-box-direction: reverse;
+-webkit-flex-direction: row-reverse;
+-moz-box-orient: horizontal;
+-moz-box-direction: reverse;
+-ms-flex-direction: row-reverse;
+flex-direction: row-reverse;
+}
+.on-column {
+-webkit-box-orient: vertical;
+-webkit-box-direction: normal;
+-webkit-flex-direction: column;
+-moz-box-orient: vertical;
+-moz-box-direction: normal;
+-ms-flex-direction: column;
+flex-direction: column;
+}
+.on-column-reverse {
+-webkit-box-orient: vertical;
+-webkit-box-direction: reverse;
+-webkit-flex-direction: column-reverse;
+-moz-box-orient: vertical;
+-moz-box-direction: reverse;
+-ms-flex-direction: column-reverse;
+flex-direction: column-reverse;
+}
+/* ==================== FLEXBOX VERTICAL AND HORIZONTAL ==================== */
+.on-vh-center {
+-webkit-box-pack: center;
+-webkit-justify-content: center;
+-moz-box-pack: center;
+-ms-flex-pack: center;
+justify-content: center;
+-webkit-align-content: center;
+-ms-flex-line-pack: center;
+align-content: center;
+-webkit-box-align: center;
+-webkit-align-items: center;
+-moz-box-align: center;
+-ms-flex-align: center;
+align-items: center;
+}
+/* ==================== FLEXBOX HORIZONTAL ==================== */
+.on-horizontal-center {
+-webkit-box-pack: center;
+-webkit-justify-content: center;
+-moz-box-pack: center;
+-ms-flex-pack: center;
+justify-content: center;
+}
+.on-horizontal-start {
+-webkit-box-pack: start;
+-webkit-justify-content: flex-start;
+-moz-box-pack: start;
+-ms-flex-pack: start;
+justify-content: flex-start;
+}
+.on-horizontal-end {
+-webkit-box-pack: end;
+-webkit-justify-content: flex-end;
+-moz-box-pack: end;
+-ms-flex-pack: end;
+justify-content: flex-end;
+}
+.on-horizontal-between {
+-webkit-box-pack: justify;
+-webkit-justify-content: space-between;
+-moz-box-pack: justify;
+-ms-flex-pack: justify;
+justify-content: space-between;
+}
+.on-horizontal-around {
+-webkit-justify-content: space-around;
+-ms-flex-pack: distribute;
+justify-content: space-around;
+}
+/* ==================== FLEXBOX VERTICAL ==================== */
+.on-vertical-center {
+-webkit-box-align: center;
+-webkit-align-items: center;
+-moz-box-align: center;
+-ms-flex-align: center;
+align-items: center;
+}
+.on-vertical-start {
+-webkit-box-align: start;
+-webkit-align-items: flex-start;
+-moz-box-align: start;
+-ms-flex-align: start;
+align-items: flex-start;
+}
+.on-vertical-end {
+-webkit-box-align: end;
+-webkit-align-items: flex-end;
+-moz-box-align: end;
+-ms-flex-align: end;
+align-items: flex-end;
+}
+/* ==================== ON COLLUMN (1..24) ==================== */
+.on-cal-24 {
+width: 100%;
+}
+.on-cal-23 {
+width: 95.8333333333%;
+}
+.on-cal-22 {
+width: 91.6666666667%;
+}
+.on-cal-21 {
+width: 87.5%;
+}
+.on-cal-20 {
+width: 83.3333333333%;
+}
+.on-cal-19 {
+width: 79.1666666667%;
+}
+.on-cal-18 {
+width: 75%;
+}
+.on-cal-17 {
+width: 70.8333333333%;
+}
+.on-cal-16 {
+width: 66.6666666667%;
+}
+.on-cal-15 {
+width: 62.5%;
+}
+.on-cal-14 {
+width: 58.3333333333%;
+}
+.on-cal-13 {
+width: 54.1666666667%;
+}
+.on-cal-12 {
+width: 50%;
+}
+.on-cal-11 {
+width: 45.8333333333%;
+}
+.on-cal-10 {
+width: 41.6666666667%;
+}
+.on-cal-9 {
+width: 37.5%;
+}
+.on-cal-8 {
+width: 33.3333333333%;
+}
+.on-cal-7 {
+width: 29.1666666667%;
+}
+.on-cal-6 {
+width: 25%;
+}
+.on-cal-5 {
+width: 20.8333333333%;
+}
+.on-cal-4 {
+width: 16.6666666667%;
+}
+.on-cal-3 {
+width: 12.5%;
+}
+.on-cal-2 {
+width: 8.33333333333%;
+}
+.on-cal-1 {
+width: 4.16666666667%;
+}
+/* ==================== ALIGN CENTER, LEFT, RIGHT ==================== */
+.on-align-center {
+text-align: center;
+}
+.on-align-left {
+text-align: left;
+}
+.on-align-right {
+text-align: right;
+}
+
+
+
+
+
+
+
+
+
+/* ===========================================================
+*		GRAYBULL STYLE CSS
+*		CUSTOMIZE 
+* ======================================================== */
+/* ==================== GLOBAL ==================== */
+* {
+	box-sizing: border-box;
+}
+.on-graybull {
+	margin: 0;
+	background: #172B4D;
+}
+.on-container {
+	max-width: 100%;
+	width: 100%;
+	margin: 0 auto;
+}
+.on-ul-wrapper {
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+.on-ul-wrapper li {
+	display: inline-block;
+	padding: 0 30px;
+}
+.on-button {
+	display: inline-block;
+    border-radius: 5px;
+    border: none;
+    min-width: 200px;
+    width: auto;
+    padding: 19px 15px;
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 36px;
+    line-height: 42px;
+    text-align: center;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+.on-button.on-button-green {
+	background: #2DCE89;
+}
+.on-button.on-button-orange {
+	background: #FB6340;
+}
+/* ==================== HEADER ==================== */
+.on-header .on-logo-name {
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 36px;
+	line-height: 42px;
+	color: rgba(255, 255, 255, 0.6);
+	margin: 0 0 0 3px;
+}
+.on-header .on-menu-wrapper .on-menu-link {
+	font-family: Roboto;
+	text-decoration: none;
+	text-align: center;
+	font-weight: bold;
+	font-size: 16px;
+	line-height: 19px;
+	color: #FFFFFF;
+}
+.on-header .on-menu-wrapper .on-menu-link .on-text {
+	display: block;
+	margin: 0 auto;
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 14px;
+}
+.on-header .on-menu-wrapper .on-menu-link .on-icon {
+	vertical-align: middle;
+}
+/* ==================== MAIN ==================== */
+.on-main-content .on-details-wrapper {
+	padding-left: 40px;
+    padding-right: 46px;
+}
+.on-details-wrapper .on-info-wrapper {
+	margin-bottom: 80px;
+}
+.on-details-wrapper .on-info-wrapper .on-item-wrapper:last-of-type {
+	margin-bottom: 0;
+}
+.on-details-wrapper .on-info-wrapper .on-item-wrapper {
+	display: inline-block;
+	min-width: 200px;
+	width: auto;
+	padding: 14px 18px 10px 18px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	margin-bottom: 14px;
+}
+.on-details-wrapper .on-info-wrapper .on-item-wrapper .on-date-wrapper {
+	margin-bottom: 2px;
+}
+.on-details-wrapper .on-info-wrapper .on-item-wrapper .on-date-wrapper .on-text {
+	font-family: Roboto;
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 14px;
+	color: #32325D;
+	vertical-align: middle;
+}
+.on-details-wrapper .on-info-wrapper .on-item-wrapper .on-date-wrapper .on-date {
+	font-family: Roboto;
+	font-weight: bold;
+	font-size: 24px;
+	line-height: 28px;
+	color: #32325D;
+	margin-left: 5px;
+	vertical-align: middle;
+}
+.on-details-wrapper .on-info-wrapper .on-item-wrapper .on-minuts-wrapper .on-text {
+	font-family: Roboto;
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 14px;
+	color: #2DCE89;
+	vertical-align: middle;
+}
+.on-details-wrapper .on-info-wrapper .on-item-wrapper .on-minuts-wrapper .on-minut {
+	font-family: Roboto;
+	font-weight: bold;
+	font-size: 24px;
+	line-height: 28px;
+	color: #2DCE89;
+	margin-left: 5px;
+	vertical-align: middle;
+}
+.on-details-wrapper .on-info-wrapper .on-item-wrapper.on-item-3 .on-date-wrapper .on-date {
+    display: block;		
+	font-family: Roboto;
+	font-weight: bold;
+	font-size: 18px;
+	line-height: 21px;
+	color: #32325D;
+	margin-left: 0;
+	vertical-align: middle;
+}
+.on-details-wrapper .on-info-wrapper .on-item-wrapper.on-item-3 .on-date-wrapper .on-date strong {
+	color: #2DCE89;
+}
+.on-buttons-wrapper .on-button-item:not(:last-of-type) {
+	margin-bottom: 14px;
+}

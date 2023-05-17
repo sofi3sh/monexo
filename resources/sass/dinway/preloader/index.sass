@@ -1,0 +1,117 @@
+// .preloader
+    // position: fixed
+    // left: 0
+    // top: 0
+    // right: 0
+    // bottom: 0
+    // background-color: var(--color-white)
+    // z-index: 20000000000
+    // &__row
+        // position: relative
+        // top: 50%
+        // left: 50%
+        // width: 70px
+        // height: 70px
+        // margin-top: -35px
+        // margin-left: -35px
+        // text-align: center
+        // animation: preloader-rotate 2s infinite linear
+// 
+    // &__item
+        // position: absolute
+        // display: inline-block
+        // top: 0
+        // background-color: #337ab7
+        // border-radius: 100%
+        // width: 35px
+        // height: 35px
+        // animation: preloader-bounce 2s infinite ease-in-out
+// 
+    // &__item:last-child
+        // top: auto
+        // bottom: 0
+        // animation-delay: -1s
+// 
+// @keyframes preloader-rotate
+    100%
+// transform: rotate(360deg)
+// 
+// @keyframes preloader-bounce
+// 
+    // 0%,
+    // 100%
+        // background-color: var(--color-blue)
+        // transform: scale(0)
+// 
+    // 50%
+        // background-color: #fefefe
+        // transform: scale(1)
+// 
+// .loaded_hiding .preloader
+    // transition: 0.3s opacity
+    // opacity: 0
+// 
+// .loaded .preloader
+    // display: none
+// 
+
+//.preloader
+//    position: fixed
+//    left: 0
+//    top: 0
+//    right: 0
+//    bottom: 0
+//    background-color: var(--color-white)
+//    z-index: 20000000000
+//    display: flex
+//    flex-direction: column
+//    align-items: center
+//    justify-content: center
+//    &__img
+//        width: 150px
+//        margin-bottom: 40px
+//    &__text
+//        display: none
+//        font-size: 30px
+//
+//.loaded_hiding .preloader
+//    transition: 0.3s opacity
+//    opacity: 0
+//
+//.loaded .preloader
+//    display: none
+//
+//.three-bounce
+//    text-align: center
+//    font-size: 26px
+//    position: relative
+//    top: -26px
+//    width: 120px
+//    margin-right: 30px
+//    display: flex
+//    align-items: center
+//    justify-content: space-around
+//    margin: 0 auto
+//
+//    > div
+//        width: 18px
+//        height: 18px
+//        border-radius: 100%
+//        background-color: var(--color-white)
+//        animation: bouncedelay 1.4s infinite ease-in-out both
+//
+//    & .one
+//        animation-delay: -0.32s
+//
+//    & .two
+//        animation-delay: -0.16s
+//
+
+@keyframes bouncedelay
+    0%, 80%, 100%
+        background-color: var(--color-white)
+        transform: scale(0)
+    40%
+        background-color: var(--color-blue)
+        transform: scale(1)
+

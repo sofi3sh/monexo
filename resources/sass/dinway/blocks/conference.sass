@@ -1,0 +1,61 @@
+.conference
+    &__title
+        +visually-hidden
+    &__container
+        display: grid
+        grid-template-columns: 513px 1fr
+        grid-column-gap: 50px
+        align-items: center
+        overflow: hidden
+        +bp900-block
+            grid-template-columns: 1fr
+    &__btn
+        display: inline-block
+        +md-block
+            margin-bottom: 20px
+    &-text
+        position: relative
+        +bp900-block
+            max-width: 375px
+            justify-self: center
+            text-align: center
+        &__item
+            max-width: 513px
+            font-size: 18px
+            line-height: 140%
+            &:not(:last-child)
+                margin-bottom: 20px
+    &-img
+        position: relative
+        +sm-block
+            height: 300px
+        +xs-block
+            height: 200px
+        &__video
+            position: absolute
+            left: 50%
+            top: 18%
+            width: 56%
+            height: 40%
+            display: flex
+            justify-content: center
+            transform: translateX(-50%)
+            border-radius: 15px
+            overflow: hidden
+            +bp900-block
+                height: 230px
+            +md-block
+                top: initial
+                left: initial
+                right: initial
+                position: relative
+                transform: initial
+                margin: 0 auto
+                width: 90%
+                height: 250px
+            +xs-block
+                height: 200px
+        &__image
+            +md-block
+                display: none
+    

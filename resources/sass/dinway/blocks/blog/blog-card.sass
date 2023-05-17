@@ -1,0 +1,162 @@
+.blog-cards
+    display: grid
+    grid-row-gap: 60px
+    grid-column-gap: 30px
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr))
+    padding: 30px 0
+
+.blog-card
+    position: relative
+    display: flex
+    flex-direction: column
+    background-color: var(--color-white)
+    border-radius: 25px
+    overflow: hidden
+    word-break: break-word
+    
+    &.shadow
+        box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2)
+
+    &.hover
+        transition: background-color .3s
+        .blog-card__link
+            transition: initial
+        
+        &:hover
+            color: var(--color-white)
+            background-color: var(--color-orange-dark)
+            .blog-card
+                &__link,
+                &__author,
+                &__date,
+                &__desc,
+                &__title
+                    color: currentColor !important
+
+    &__image
+        overflow: hidden
+        border-radius: 25px 25px 0  0
+        height: 240px
+        
+        > img
+            object-fit: cover
+            height: 100%
+            width: 100%
+
+    &__tags
+        margin-bottom: 1rem
+        opacity: 0.5
+        font-size: 90%
+
+    &__text
+        padding: 20px
+
+    &__content
+        margin-bottom: 20px
+        
+    &__author
+        color: var(--color-gray)
+        text-transform: uppercase
+
+    &__title
+        font-size: 22px
+        font-weight: 700
+        margin-bottom: 15px
+
+    &__desc
+        line-height: 120%
+        height: 116px
+        overflow: hidden
+    &__info
+        margin-bottom: 20px
+
+    &__date
+        display: block
+        margin-bottom: 10px
+
+    &-info
+        display: flex
+        flex-wrap: wrap
+        justify-content: space-between
+        padding: 20px 0
+        font-size: 90%     
+        
+        &__author
+            color: var(--color-gray)
+            margin-bottom: 15px
+        
+        &__category
+            margin-bottom: 5px
+
+        &__date
+            display: block
+            margin-bottom: 10px
+            color: var(--color-blue)
+        
+
+    &__footer
+        display: flex
+
+    &__link.cover
+        &::before
+            content: ''
+            position: absolute
+            top: 0
+            bottom: 0
+            left: 0
+            right: 0
+
+    &__link
+        transition: fill .3s, color .3s
+        &:hover
+            fill: var(--color-blue)
+            color: var(--color-blue)
+
+
+.blog-card--lg
+    padding: 50px 60px
+    max-width: 916px
+    border-radius: 30px
+    
+    +md-block
+        padding: 0
+
+    .blog-card
+        
+        &-info
+            font-size: 18px
+        &__image
+            max-width: 760px
+            height: 393px
+            border-radius: 30px 30px 0  0
+            +md-block
+                height: 300px
+            +sm-block
+                height: 200px
+
+        &__text
+            padding: 40px
+            +md-block
+                padding: 20px
+
+        &__title
+            font-size: 30px
+
+            +md-block
+                font-size: 22px
+
+        &__desc
+            line-height: 140%
+            font-size: 18px
+            overflow: initial
+            height: initial
+            +md-block
+                font-size: 16px
+        
+        &__link
+            font-size: 22px
+            
+
+
+
+    

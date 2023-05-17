@@ -1,0 +1,42 @@
+.blog-slider
+    background-color: var(--hawkes-blue)
+    
+    &__container
+        max-width: 1110px
+        overflow: hidden
+
+    &__content
+        display: grid
+        grid-template-columns: 8fr 5fr
+        grid-gap: 30px
+        padding: 100px 0
+        +bp1050-block
+            grid-template-columns: 2fr 1.5fr
+        +bp900-block
+            padding-top: 30px
+            grid-template-columns: 1fr
+        +sm-block
+            padding-bottom: 30px
+    &__top
+        overflow: auto
+        &::-webkit-scrollbar
+            display: none
+    &-thumbs
+        .swiper-container
+            max-height: 600px
+            +bp900-block
+                max-height: 300px
+        &__cards
+            display: flex
+            flex-direction: column
+            .blog-secondary-card:not(:last-child)
+                margin-bottom: 14px
+
+.main-blog 
+    ~ .footer
+        margin-top: -60px
+    > .blog-slider
+        padding-bottom: 30px
+
+
+        

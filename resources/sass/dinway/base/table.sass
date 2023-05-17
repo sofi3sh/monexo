@@ -1,0 +1,92 @@
+.table-wrap
+    overflow: auto
+    
+.table-fixed 
+    position: relative
+    display: block
+    border-collapse: separate
+    white-space: nowrap
+    width: max-content
+    padding-right: 0
+    margin: 0 auto
+    height: 100%
+    min-width: 600px
+    
+    thead 
+        display: block
+        overflow-y: scroll
+        overflow-x: auto
+        visibility: hidden 
+        padding-right: 0
+
+        tr 
+            display: table
+            width: 100%
+            visibility: visible 
+
+    tbody 
+        display: block
+        position: absolute
+        overflow-y: auto
+        overflow-x: hidden
+        top: 34px
+        bottom: 0
+        left: 0
+        right: 0
+        border-top: 2px solid rgba(0, 0, 0, 0.1)
+
+    th,
+    td 
+        line-height: 1.4
+        padding: 0.4em 0.5em
+
+    th 
+        vertical-align: bottom
+
+    td 
+        vertical-align: top
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1)
+
+    .col
+        &-1
+            min-width: 50px
+        &-2
+            min-width: 100px
+        &-3, &-4, &-5,  &-6
+            min-width: 180px
+        &-7
+            min-width: 190px
+        &-8
+            min-width: 238px
+
+.table
+    width: 100%
+    
+    &-responsive
+        overflow: auto
+        
+        table
+            min-width: 700px
+
+    &--center
+        text-align: center
+
+
+    th, td
+        padding: 10px 25px
+
+    &--blue
+
+        thead tr
+            background-color: var(--color-blue)
+            color: var(--color-white)
+
+        tbody
+            tr
+                &:nth-of-type(odd)
+                    background-color: var(--hawkes-blue)
+                
+    
+
+
+

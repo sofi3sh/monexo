@@ -1,0 +1,36 @@
+{
+  "name": "dok5/laravel-referrals",
+  "description": "Laravel referrals.",
+  "keywords": [
+    "dok5",
+    "laravel",
+    "referrals"
+  ],
+  "license": "MIT",
+  "version": "1.0.2",
+  "authors": [
+    {
+      "name": "Dok5",
+      "email": "dok112@protonmail.com",
+      "homepage": ""
+    }
+  ],
+  "require": {},
+  "require-dev": {},
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Dok5\\Referrals\\ReferralsServiceProvider"
+      ]
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Dok5\\Referrals\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {}
+  },
+  "minimum-stability": "dev"
+}

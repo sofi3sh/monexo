@@ -1,0 +1,140 @@
+{
+  "name": "laravel/laravel",
+  "type": "project",
+  "description": "The Laravel Framework.",
+  "keywords": [
+    "framework",
+    "laravel"
+  ],
+  "license": "MIT",
+  "require": {
+    "php": "^7.4",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "anhskohbo/no-captcha": "^3.2",
+    "astrotomic/laravel-translatable": "^11.6",
+    "bacon/bacon-qr-code": "*",
+    "barryvdh/laravel-dompdf": "^0.8.7",
+    "biscolab/laravel-recaptcha": "*",
+    "doctrine/dbal": "^2.10",
+    "dok5/active-menu-item": "@dev",
+    "dok5/lang-switcher": "@dev",
+    "dok5/laravel-coinpayments": "@dev",
+    "dok5/laravel-migration-helper": "@dev",
+    "dok5/laravel-referrals": "@dev",
+    "fideloper/proxy": "^4.0",
+    "guzzlehttp/guzzle": "^6.3",
+    "hisorange/browser-detect": "^4.4",
+    "irazasyed/telegram-bot-sdk": "^3.1",
+    "kalnoy/nestedset": "^4.3",
+    "laravel-notification-channels/telegram": "^0.5.1",
+    "laravel/framework": "5.8.*",
+    "laravel/socialite": "^4.3",
+    "laravel/tinker": "^1.0",
+    "monicahq/laravel-cloudflare": "^1.4",
+    "pragmarx/google2fa-laravel": "^1.0",
+    "predis/predis": "^1.1",
+    "rap2hpoutre/laravel-log-viewer": "^1.7",
+    "spatie/flysystem-dropbox": "^1.2",
+    "spatie/laravel-backup": "6.9",
+    "spatie/laravel-medialibrary": "^7.0.0",
+    "spatie/laravel-translatable": "4.5.2",
+    "tintnaingwin/email-checker": "^2.0",
+    "yajra/laravel-datatables-oracle": "~9.0"
+  },
+  "provide": {
+    "ext-imagick": "*"
+  },
+  "require-dev": {
+    "barryvdh/laravel-debugbar": "^3.2",
+    "barryvdh/laravel-ide-helper": "v2.7.0",
+    "beyondcode/laravel-dump-server": "^1.0",
+    "filp/whoops": "^2.0",
+    "fzaninotto/faker": "^1.4",
+    "mockery/mockery": "^1.0",
+    "nunomaduro/collision": "^2.0",
+    "orangehill/iseed": "^2.6",
+    "phpunit/phpunit": "^7.5",
+    "xethron/migrations-generator": "^2.0"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "extra": {
+    "laravel": {
+      "dont-discover": []
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "Modules\\": "Modules/"
+    },
+    "classmap": [
+      "database/seeds",
+      "database/factories"
+    ],
+      "files": [
+          "app/Support/helper.php"
+      ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "packages/dok5/lang-switcher",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "packages/dok5/laravel-coinpayments",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "packages/dok5/laravel-migration-helper",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "packages/dok5/laravel-referrals",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "packages/dok5/active-menu-item",
+      "options": {
+        "symlink": true
+      }
+    }
+  ],
+
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "scripts": {
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover --ansi"
+    ],
+    "post-root-package-install": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
+    "post-create-project-cmd": [
+      "@php artisan key:generate --ansi"
+    ]
+  }
+}

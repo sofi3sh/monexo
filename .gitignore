@@ -1,0 +1,12 @@
+/public/landing/video/*.mp4
+/public/images/*.mp4
+/public/frontend/video
+/public/news
+/public/storage
+/bootstrap/cache/*
+/storage/*.key
+/.env
+.idea/
+/vendor
+/composer.lock
+/work

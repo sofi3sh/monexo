@@ -1,0 +1,205 @@
+*, *::before, *::after
+    box-sizing: border-box
+    
+body
+    font-size: 16px
+    min-height: 100vh
+    font-family: 'YandexSansText', sans-serif
+
+h1, h2, h3, h4, h5, h6
+    font-family: 'YandexSansDisplay', sans-serif
+
+a
+    color: inherit
+    text-decoration: none
+    
+.container
+    overflow: hidden
+    +wrapper
+
+.section
+    padding: 60px 0
+    +sm-block
+        padding: 30px 0
+        
+.title
+    font-weight: 700
+    font-size: 35px
+    line-height: 43px
+    font-size: 36px
+    line-height: 43px
+    color: var(--color-blue)
+    +bp900-block
+        text-align: center !important
+    +xs-block
+        font-size: 32px
+
+.strong
+    font-weight: 700
+
+.btn-white
+    cursor: pointer
+    border: 1px solid var(--color-blue)
+    text-align: center
+    border-radius: 29px
+    padding: 16px 52px
+    background-color: transparent
+    transition: color .3s,  background-color .3s
+    &:hover
+        color: var(--color-white)
+        background-color: var(--color-blue)
+        
+
+.text-center
+    text-align: center
+
+.mb-3
+    margin-bottom: 30px
+
+.btn-blue
+    text-align: center
+    cursor: pointer
+    text-decoration: none
+    background-color: var(--color-blue)
+    border-radius: 46px
+    padding: 16px 40px
+    color: var(--color-white)
+    border: 1px solid transparent
+    transition: background-color .3s, border .3s, color .3s
+    &:hover
+        background-color: transparent
+        color: var(--color-blue)
+        border: 1px solid var(--color-blue)
+
+.hover-text-white
+    &:hover
+        color: var(--color-white)
+
+.link-language
+    color: var(--color-black)
+    &--active
+        color: var(--color-blue)
+
+.swipe-info
+    display: none
+    padding: 0 10px 20px
+    align-items: center
+    +sm-block
+        display: flex
+    &__text
+        white-space: nowrap
+        line-height: 22px
+        color: var(--color-orange)
+        font-size: 16px
+    &__arrow
+        flex-grow: 1
+    &__img
+        width: 100%
+
+.link_orange
+    color: var(--color-orange)
+    position: relative
+    text-decoration: none
+
+    &::after
+        content: ''
+        display: block
+        position: absolute
+        bottom: -1px
+        left: 0
+        width: 100%
+        height: 1px
+        background-color: currentColor
+
+    &:hover
+        color: var(--color-blue)
+        &::after
+            width: 0
+
+.icon_white
+    fill: var(--color-white)
+
+
+.btn-green
+    padding: 10px
+    white-space: nowrap
+    width: min-content
+    border-radius: 30px
+    color: var(--color-blue )
+    border: 1px solid currentColor
+    font-style: normal
+    font-weight: bold
+    font-size: 12px
+    line-height: 140%
+
+.overlay
+    position: fixed
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    z-index: 9999
+    opacity: 0
+    visibility: hidden
+    opacity: 0
+    background-color: rgba(0,0,0,0.8)
+    transition: opacity .3s
+    &.active
+        visibility: visible
+        opacity: 1
+
+button
+    border: none
+    background-color: transparent
+    padding: 0
+    &[disabled]
+        cursor: auto
+        color: rgba(0, 0, 0, 0.3) !important
+        background-color: rgba(0, 0, 0, 0.1) !important
+        border: none !important
+    &:focus
+        outline: none
+
+.btn-transparent
+    font-weight: 700
+    padding: 15px 20px
+    cursor: pointer
+    line-height: 14px
+    color: var(--color-blue)
+    border-radius: 30px
+    border: 1px solid currentColor
+    text-decoration: none
+    display: inline-flex
+    align-items: center
+    transition: border 0.3s, color 0.3s, background-color 0.3s
+    background-color: transparent
+    &:hover, &:focus
+        color: var(--color-white)
+        border: 1px solid var(--color-blue)
+        background-color: var(--color-blue)
+    
+
+.slider-btn_simple
+    height: 13px !important
+    width: 9px !important
+
+
+.error
+    border: 1px solid #F62626 !important
+
+.invalid-feedback
+    padding: 5px 0
+    color: #F62626
+            
+
+// links 
+.custom-link
+    color: var(--color-blue)
+
+    &:hover
+        color: inherit
+
+
+
+    
+

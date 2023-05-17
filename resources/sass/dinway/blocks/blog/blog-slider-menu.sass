@@ -1,0 +1,23 @@
+.blog-slider-menu
+    display: flex
+    flex-wrap: wrap
+    justify-content: center
+    min-width: max-content
+    padding-top: 87px
+    margin: 0 auto
+    background-color: var(--color-white)
+    +sm-block
+        justify-content: flex-start
+        padding-top: 30px
+    
+    &__item.active .blog-slider-menu__btn
+        background-color: var(--hawkes-blue)
+    
+    &__btn
+        display: block
+        padding: 15px 35px
+        font-size: 18px
+        border: 2px solid var(--hawkes-blue)
+        border-radius: 31px 31px 0 0
+        +sm-block
+            padding: 10px 15px

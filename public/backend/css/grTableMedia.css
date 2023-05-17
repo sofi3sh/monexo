@@ -1,0 +1,260 @@
+@media screen and (max-width: 1680px) {
+    .transactions-ns-model .tnsm-body tr td .tnsm-block.time h2 {
+        font-size: 24px;
+    }
+    .transactions-ns-model .tnsm-body tr td .tnsm-block.time small {
+        font-size: 12px;
+        font-weight: normal;
+    }
+    .transactions-ns-model .tnsm-body tr td .sum-cr.tnsm-block .content h2,
+    .transactions-ns-model .tnsm-body tr td .sum-usd.tnsm-block .content h2,
+    .transactions-ns-model .tnsm-body tr td .rate.tnsm-block .content h2,
+    .transactions-ns-model .tnsm-body tr td .email.tnsm-block .content h2,
+    .transactions-ns-model .tnsm-body tr td .user.tnsm-block .content h2 {
+        font-size: 17px;
+        text-align: left;
+    }
+    .transactions-ns-model .tnsm-body tr td .sum-cr.tnsm-block .content small,
+    .transactions-ns-model .tnsm-body tr td .sum-usd.tnsm-block .content small,
+    .transactions-ns-model .tnsm-body tr td .rate.tnsm-block .content small,
+    .transactions-ns-model .tnsm-body tr td .email.tnsm-block .content small,
+    .transactions-ns-model .tnsm-body tr td .user.tnsm-block .content small {
+        font-size: 15px;
+    }
+    .transactions-ns-model .tnsm-body tr td .type.tnsm-block .content h2 {
+        font-size: 14px;
+    }
+}
+@media screen and (max-width: 1340px) {
+    .transactions-ns-model .tnsm-body tr td .tnsm-block.time h2 {
+        font-size: 22px;
+    }
+    .transactions-ns-model .tnsm-body tr td .tnsm-block.time small {
+        font-size: 11px;
+        font-weight: normal;
+    }
+    .transactions-ns-model .tnsm-body tr td .sum-cr.tnsm-block .content h2,
+    .transactions-ns-model .tnsm-body tr td .sum-usd.tnsm-block .content h2,
+    .transactions-ns-model .tnsm-body tr td .rate.tnsm-block .content h2,
+    .transactions-ns-model .tnsm-body tr td .email.tnsm-block .content h2,
+    .transactions-ns-model .tnsm-body tr td .user.tnsm-block .content h2 {
+        font-size: 18px;
+    }
+    .transactions-ns-model .tnsm-body tr td .sum-cr.tnsm-block .content small,
+    .transactions-ns-model .tnsm-body tr td .sum-usd.tnsm-block .content small,
+    .transactions-ns-model .tnsm-body tr td .rate.tnsm-block .content small,
+    .transactions-ns-model .tnsm-body tr td .email.tnsm-block .content small,
+    .transactions-ns-model .tnsm-body tr td .user.tnsm-block .content small {
+        font-size: 14px;
+    }
+    .transactions-ns-model .tnsm-body tr td .tnsm-block {
+        padding: 10px 0;
+    }
+}
+@media screen and (max-width: 1100px) {
+    table.transactions-ns-model.transactions-ns-model-adaptive {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .transactions-ns-model-adaptive thead.tnsm-header {
+        display: none;
+    }
+
+    .transactions-ns-model-adaptive tbody.tnsm-body tr {
+        width: 100%;
+
+        border-radius: 25px !important;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+
+        overflow: hidden;
+    }
+    .transactions-ns-model .tnsm-body tr:nth-child(1n) {
+        border-left: 3px solid #4193ff;
+    }
+    .transactions-ns-model .tnsm-body tr:nth-child(2n) {
+        border-left: 3px solid #ff41f6;
+    }
+    .transactions-ns-model .tnsm-body tr:nth-child(3n) {
+        border-left: 3px solid #ff4151;
+    }
+    .transactions-ns-model .tnsm-body tr:nth-child(4n) {
+        border-left: 3px solid #f26522;
+    }
+    .transactions-ns-model .tnsm-body tr:nth-child(5n) {
+        border-left: 3px solid #9e0b0f;
+    }
+    .transactions-ns-model .tnsm-body tr td:first-child {
+        border: 1px solid #e6e6e6;
+    }
+    .transactions-ns-model-adaptive tbody.tnsm-body tr td {
+        width: 100%;
+        height: max-content;
+
+        padding: 0 10px;
+        
+        border: 1px solid #e6e6e6 !important;
+        border-radius: 0 !important;
+
+        position: relative;
+    }
+
+    .transactions-ns-model-adaptive tbody.tnsm-body tr td:before {
+        content: attr(aria-label);
+        max-width: 100px;
+
+        font-size: 12px;
+        font-weight: bold;
+        text-align: right;
+
+        margin: 0;
+        padding: 0;
+
+        color: #252525;
+
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        position: absolute;
+        right: 10px;
+        top: 0;
+        bottom: 0;
+    }
+
+    .transactions-ns-model .tnsm-body tr td .tnsm-block {
+        min-height: 35px;
+        max-height: 55px;
+        height: 55px;
+    }
+
+    .transactions-ns-model .tnsm-body tr td .tnsm-block .content {
+        min-height: auto;
+        justify-content: center;
+    }
+
+    .transactions-ns-model-adaptive tbody.tnsm-body tr td .tnsm-block:after {
+        width: 0;
+    }
+
+    .transactions-ns-model-adaptive .tnsm-body tr td .tnsm-block.time {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .transactions-ns-model-adaptive .tnsm-body tr td .tnsm-block.time h2:after {
+        content: '-';
+
+        font-size: 22px;
+        font-weight: bold;
+
+        color: #252525;
+
+        margin: 0 5px;
+    }
+
+    .transactions-ns-model-adaptive .tnsm-body tr td .tnsm-block.time small {
+        font-size: 22px;
+        font-weight: bold;
+
+        margin: 0;
+    }
+
+    .transactions-ns-model .tnsm-body tr td .tnsm-block .logo {
+        min-width: 35px;
+        max-width: 35px;
+        width: 35px;
+        min-height: 35px;
+        max-height: 35px;
+        height: 35px;
+        
+        margin: 0 5px 0 0;
+    }
+    .transactions-ns-model .tnsm-body tr td .tnsm-block .logo span {
+        width: 35px;
+        height: 35px;
+        font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .left-menu {
+        display: none;
+    }
+    .content {
+        margin: 0;
+    }
+}
+@media screen and (max-width: 1200px) {
+    .ifrb-block,.ifrb-block.active {
+        padding: 10px 5px;
+    }
+    .ifmb-calc {
+        flex-direction: column;
+    }
+    .ifmb-calc-revers {
+        transform: rotate(90deg);
+    }
+    .ifmb-calc-revers:hover {
+        transform: rotate(270deg);
+    }
+    .ifmb-calc-block {
+        min-width: 100%;
+        max-width: 100%;
+    }
+    .ifmb-calc-first {
+        margin: 0 0 1px 0;
+    }
+    .ifmb-calc-second {
+        margin: 1px 0 0 0;
+    }
+
+    .if--main-block, .if--result-block {
+        max-width: 100%;
+        min-width: 100%;
+    }
+    
+    .investment-form {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    
+    .if--result-block:before {
+        width: 100%;
+        height: 10%;
+        top: -5%;
+        left: 0;
+    }
+    
+    .ifrb-block, .ifrb-block.active {
+        width: 100%;
+        height: 102%;
+        left: unset;
+        top: -2%;
+    }
+
+    .ifrb-block {
+        display: none;
+    }
+
+    .ifrb-block.active {
+        display: flex;
+        z-index: 1;
+    }
+
+    .ifrb-block form .ifrbo-block {
+        display: none;
+    }
+
+    .ifrb-block form .ifrbo-block.active {
+        display: flex;
+        flex-direction: column;
+    }
+}

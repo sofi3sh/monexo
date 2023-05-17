@@ -1,0 +1,105 @@
+version: "3.7"
+
+networks:
+  backend:
+    driver: "bridge"
+
+volumes:
+  dbdata:
+    driver: local
+  redisdata:
+    driver: local
+
+services:
+  php:
+    build:
+      context: './docker/php/'
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    volumes:
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+      - ./:/var/www/
+    container_name: graybet_php
+    links:
+      - mysql
+
+  nginx:
+    image: nginx:latest
+    container_name: graybet_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - backend
+    depends_on:
+      - php
+      - mysql
+
+  mysql:
+    image: mysql:5.7
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "6033:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - backend
+    # The default MySQL installation only creates the "root" administrative account
+    # create new users using docker-compose exec
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    container_name: graybet_mysql
+
+  phpmyadmin:
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8081:80'
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      MYSQL_USERNAME: ${DB_USERNAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      UPLOAD_LIMIT: 200M
+    networks:
+      - backend
+    volumes:
+      - /sessions
+    container_name: graybet_phpmyadmin
+
+  redis:
+    image: redis:latest
+    container_name: graybet_redis
+    restart: always
+    volumes:
+      - redisdata:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+  node:
+    image: node:latest
+    tty: true
+    restart: always
+    container_name: graybet_node_js
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    ports:
+      - "3000:3000"
+    networks:
+      - backend

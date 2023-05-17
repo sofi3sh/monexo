@@ -1,0 +1,49 @@
+.faq-search
+    background: url('../img/frontsite/faq-search/faq-search-bg.svg') center -20px
+    background-repeat: no-repeat
+    background-color: var(--color-blue)
+    &__content
+        display: flex
+        justify-content: space-around
+        align-items: center
+        padding: 70px 0
+        +md-block
+            flex-direction: column-reverse
+    &__title
+        font-weight: 600
+        font-size: 24px
+        line-height: 28px
+        color: var(--color-white)
+        margin-bottom: 27px
+        +md-block
+            text-align: center
+    &__left
+        margin-right: 135px
+        +md-block
+            margin: 30px auto 0
+    &__right
+        flex-grow: 1
+    &__image
+        min-width: 246px
+
+.search
+    display: flex
+    background-color: var(--color-white)
+    padding: 17px 35px
+    border-radius: 22px
+    +xxs-block
+        padding: 10px 20px
+    &__input
+        flex-grow: 1
+        font-size: 18px
+        margin-right: 20px
+        border: none
+        +xxs-block
+            font-size: 16px
+        &:focus
+            outline: none
+    &__loupe
+        $size: 22px
+        width: $size
+        height: $size
+

@@ -1,0 +1,95 @@
+.modal-info
+    display: grid
+    grid-gap: 20px
+    grid-template-columns: 1.2fr 3fr
+    +bp620-block
+        grid-template-columns: 1fr
+    &-list
+        &__item
+            line-height: 22px
+            margin-bottom: 10px
+
+.modal-linear-program
+    line-height: 120%
+    
+    .modal__title
+        text-align: center
+        margin: 0 auto
+        padding-right: 5px
+
+    &__text
+        margin-bottom: 10px
+
+    &__list
+        list-style-type: disc
+        margin-left: 30px
+        margin-bottom: 10px
+            
+
+.modal_audit, .modal_poll
+    .modal__content:not([data-current])
+        display: none
+    .modal__submit
+        display: none
+
+.modal-poll__text
+    margin-bottom: 30px
+
+.modal-form
+    &__title
+        margin-bottom: 20px
+    &__checkbox
+        position: relative
+        display: block
+        padding-left: 30px
+        &:not(:last-child)
+            margin-bottom: 10px
+        span
+            display: block
+            width: 20px
+            height: 20px
+            position: absolute
+            left: 0
+            top: 50%
+            transform: translateY(-50%)
+            background-image: url("../img/frontsite/input-default.svg")
+        input
+            appearance: none
+            left: 0
+            position: absolute
+            &:checked + span
+                background-image: url("../img/frontsite/input-checked.svg")
+
+.modal-graybull
+    &__text-wrap
+        max-height: 200px
+        overflow: auto
+        margin-bottom: 30px
+        padding-right: 20px
+        &::-webkit-scrollbar
+            width: 6px
+            height: 6px
+            background-color: var(--hawkes-blue)
+        &::-webkit-scrollbar-thumb
+            background-color: var(--color-blue)
+            border-radius: 9em
+        &::-webkit-scrollbar-thumb:hover
+            background-color: #253861
+        &__text
+            font-weight: 300
+            font-size: 18px
+            line-height: 25px
+            color: var(--color-midnight)
+
+.modal-audit-info__info
+    font-weight: 300
+    font-size: 14px
+    color: var(--color-midnight)
+    opacity: 0.4
+    line-height: 151.4%
+
+
+                    
+
+
+

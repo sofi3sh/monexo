@@ -1,0 +1,72 @@
+.blog-main-card
+    position: relative
+    z-index: 4
+    max-width: 730px
+    &__image
+        position: relative
+        z-index: -1
+        border-radius: 26px
+        overflow: hidden
+        height: 507px
+        +sm-block
+            height: 300px
+        img
+            object-fit: contain
+            width: 100%
+            height: 100%
+    &-article
+        position: relative
+        background-color: var(--color-white)
+        border-radius: 26px
+        width: 100%
+        max-width: 635px
+        margin: -65px auto 0
+        padding: 30px
+    &-article__header
+        display: flex
+        justify-content: space-around
+        margin-bottom: 10px
+    &-article__header-left
+        flex-grow: 1
+    &-article__header-right
+        width: 60px
+        display: -webkit-box
+        display: flex
+        justify-content: space-between
+        align-items: center
+    &-article__title
+        font-weight: 600
+        font-size: 24px
+        line-height: 28px
+        margin-bottom: 8px
+    &-article__date,
+    &-article__time
+        font-size: 14px
+        margin-right: 20px
+        color: var(--color-blue)
+        +sm-block
+            margin-right: 2px
+    &-article__author
+        font-size: 14px
+        text-transform: uppercase
+        color: rgba(0, 0, 0, 0.29)
+    &-article__text
+        font-size: 18px
+        line-height: 140%
+        word-break: break-word
+    &-article__text-wrap
+        overflow: auto
+        max-height: 150px
+        padding-right: 5px
+    &-article__text-wrap::-webkit-scrollbar-thumb
+        background-color: rgba(0, 0, 0, 0.5)
+        border-radius: 5px
+    &-article__text-wrap::-webkit-scrollbar
+        width: 5px
+        border-radius: 5px
+        background-color: rgba(0, 0, 0, 0.1)
+    &-article__decor
+        position: absolute
+        z-index: -1
+        top: -100px
+        left: -100px

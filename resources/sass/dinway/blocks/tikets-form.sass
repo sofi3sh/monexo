@@ -1,0 +1,43 @@
+.tickets-form
+    
+    &__content
+        display: grid
+        grid-template-columns: 1fr 1.25fr
+        grid-column-gap: 30px
+        
+        > div
+            align-self: center
+
+        > .image
+            justify-self: center
+
+        +md-block
+            grid-template-columns: 1fr
+        
+    &__text
+        display: block
+        margin-bottom: 10px
+    
+    &__input
+        width: 100%
+        padding: 10px 15px
+        border-radius: 25px
+        font-size: 16px
+        border: 1px solid var(--color-blue)
+        margin-bottom: 10px
+
+        &:focus
+            outline: none
+    
+    &__textarea
+        width: 100%
+        resize: none
+        height: 90px
+        font-size: 16px
+        border-radius: 25px
+        border: 1px solid var(--color-blue)
+        padding: 10px 15px
+        margin-bottom: 10px
+        
+        &:focus
+            outline: none

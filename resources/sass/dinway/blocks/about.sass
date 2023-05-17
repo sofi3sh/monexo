@@ -1,0 +1,78 @@
+.about
+    position: relative
+    &__container
+        display: grid
+        grid-template-areas: "img title" "img text"
+        grid-template-rows: 50px 1fr
+        grid-template-columns: 1fr 1fr
+        grid-row-gap: 30px
+        grid-column-gap: 39px
+        align-items: center
+        margin: 0 auto
+        max-width: 1213px
+        padding: 0 15px
+        overflow: hidden
+        +lg-block
+            grid-gap: 30px
+        +bp900-block
+            text-align: center
+            grid-template-columns: 1fr
+            grid-template-rows: initial
+            grid-template-areas:  "title" "text" "img"
+    &__branch
+        position: absolute
+        top: 0
+        left: 0
+        +md-block
+            display: none
+    &__title
+        grid-area: title
+    &-img
+        position: relative
+        grid-area: img
+        padding: 30px 0
+        display: flex
+        &__img
+            position: absolute
+            z-index: -1
+            top: 50%
+            left: 260px
+            transform: translate(-50%, -50%)
+            +bp900-block
+                left: 50%
+            +sm-block
+                display: none
+                transform: translate(-50%, calc(-50% + -100px)) scale(1.5)
+    &__video
+        height: 257px
+        width: 100%
+        max-width: 452px
+        border-radius: 6px
+        margin-left: 20px
+        +bp900-block
+            margin-left: auto
+            margin-right: auto
+        +xs-block
+            max-height: 200px
+    &-text
+        grid-area: text
+        align-self: start
+        &__item
+            font-size: 18px
+            line-height: 140%
+            margin-bottom: 20px
+            +bp900-block
+                margin: 0 auto 20px
+            +md-block
+                margin: 0 auto
+        &__strong
+            font-weight: 700
+    &__btn
+        +md-block
+            display: none
+    &__arrow
+        +bp900-block
+            display: none
+
+
+

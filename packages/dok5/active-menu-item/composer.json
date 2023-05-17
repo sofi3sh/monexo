@@ -1,0 +1,21 @@
+{
+    "name": "dok5/active-menu-item",
+    "license": "MIT",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "dok5",
+            "email": "ttt@tt.tt"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Dok5\\active-menu-item\\": "src"
+        },
+        "files": [
+            "src/Helpers/ActiveMenu.php"
+        ]
+    }
+}

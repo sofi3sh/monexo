@@ -1,0 +1,51 @@
+.suggestion-item{
+    padding-right: 25px;
+
+    .suggestion-card{
+        min-height: 70px;
+        border-radius: 35px;
+        background-color: #ebf1fe;
+        padding: 21px 40px;
+        position: relative;
+
+        .round{
+            text-align: center;
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            padding: 4px 13px;
+            position: absolute;
+            top: 11px;
+            box-shadow: 1px 1px 10px #00000042;
+            cursor: pointer;
+
+            .likes-count{
+                font-size: 14px;
+                line-height: 16px;
+                vertical-align: text-top;
+            }
+
+            &.like-suggestion{
+                right: -25px;
+                background: white;
+                color: #5e72e4;
+
+                &.liked{
+                    background: #768aff;
+                    color: white;
+                }
+            }
+            &.dislike-suggestion{
+                right: 35px;
+                background: white;
+                color: #e45e5e;
+
+                &.liked{
+                    background: #ff7676;
+                    color: white;
+                }
+            }
+        }
+    }
+
+}
