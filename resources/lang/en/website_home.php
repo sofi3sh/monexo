@@ -136,6 +136,7 @@ return [
         'force_close' => 'Early&nbsp;closing',
         'available_withdraw' => 'Body is available for withdraw',
         'no' => 'no',
+        'yes' => 'yes',
         'invest_body' => 'Payout&nbsp;body',
         'enable' => 'enable',
         'disable' => 'disable',
