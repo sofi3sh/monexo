@@ -66,6 +66,8 @@ class MarketingPlan extends Model
     const GROUP_MINI = 'Mini';
     const GROUP_LIGHT = 'Light';
     const GROUP_NEW_LIGHT = 'New Light';
+    const GROUP_REGULAR = 'Regular';
+    const GROUP_RANDOM = 'Random';
 
     const MP_BTC_INVITATION = 19;
     const MP_PZM_INVITATION = 20;
@@ -102,6 +104,10 @@ class MarketingPlan extends Model
      */
     public function isNewByIdAndName(string $group = ''): bool
     {
+//        dump($this->id >= 1 && $this->id <= 27);
+//        dump($this->id);
+//        dump($this->name);
+//        dd($group);
         $isId = $this->id >= 12 && $this->id <= 27;
 
         $isName = $this->name === $group;
@@ -113,7 +119,8 @@ class MarketingPlan extends Model
         }
 
 
-        return $isId && $isName;
+        return true && true;
+//        return $isId && $isName;
     }
 
 
@@ -151,23 +158,31 @@ class MarketingPlan extends Model
     {
         $groups = [
             'cssClasses' => [
-                //self::GROUP_NEW_LIGHT => 'first',
-                self::GROUP_STANDARD => 'first',
-                self::GROUP_CRYPTO_BUSINESS => 'second d-none',
-                self::GROUP_BUSINESS => 'third d-none',//'third d-none',
-                // self::GROUP_LIGHT => 'third',
-                self::GROUP_MINI => 'four', //'four',
-                self::GROUP_NEW_LIGHT => 'five',
+                self::GROUP_REGULAR => 'first',
+                self::GROUP_RANDOM => 'second',
             ],
             'packages' => [
-                //self::GROUP_NEW_LIGHT => [],
-                self::GROUP_STANDARD => [],
-                self::GROUP_CRYPTO_BUSINESS => [],
-                self::GROUP_BUSINESS => [],
-                // self::GROUP_LIGHT => [],
-                self::GROUP_MINI => [],
-                self::GROUP_NEW_LIGHT => [],
+                self::GROUP_REGULAR => [],
+                self::GROUP_RANDOM => [],
             ]
+//            'cssClasses' => [
+//                //self::GROUP_NEW_LIGHT => 'first',
+//                self::GROUP_STANDARD => 'first',
+//                self::GROUP_CRYPTO_BUSINESS => 'second d-none',
+//                self::GROUP_BUSINESS => 'third d-none',//'third d-none',
+//                // self::GROUP_LIGHT => 'third',
+//                self::GROUP_MINI => 'four', //'four',
+//                self::GROUP_NEW_LIGHT => 'five',
+//            ],
+//            'packages' => [
+//                //self::GROUP_NEW_LIGHT => [],
+//                self::GROUP_STANDARD => [],
+//                self::GROUP_CRYPTO_BUSINESS => [],
+//                self::GROUP_BUSINESS => [],
+//                // self::GROUP_LIGHT => [],
+//                self::GROUP_MINI => [],
+//                self::GROUP_NEW_LIGHT => [],
+//            ]
         ];
 
         // проставка активного класса, если он есть в ссылке
@@ -185,23 +200,29 @@ class MarketingPlan extends Model
 
         foreach (self::getActive()->get() as $marketingPlan) {
             //$groups['packages'][$marketingPlan->name][] = $marketingPlan;
-            if (strstr($marketingPlan->name, self::GROUP_STANDARD)) {
-                $groups['packages'][self::GROUP_STANDARD][] = $marketingPlan;
+            if (strstr($marketingPlan->name, self::GROUP_REGULAR)) {
+                $groups['packages'][self::GROUP_REGULAR][] = $marketingPlan;
             }
-            if (strstr($marketingPlan->name, self::GROUP_CRYPTO_BUSINESS)) {
-                $groups['packages'][self::GROUP_CRYPTO_BUSINESS][] = $marketingPlan;
+            if (strstr($marketingPlan->name, self::GROUP_RANDOM)) {
+                $groups['packages'][self::GROUP_RANDOM][] = $marketingPlan;
             }
-            if ($marketingPlan->name === self::GROUP_BUSINESS) {
-                $groups['packages'][self::GROUP_BUSINESS][] = $marketingPlan;
-            }
-            if (strstr($marketingPlan->name, self::GROUP_MINI)) {
-                $groups['packages'][self::GROUP_MINI][] = $marketingPlan;
-            }
-            if (strstr($marketingPlan->name, self::GROUP_NEW_LIGHT)) {
-                $groups['packages'][self::GROUP_NEW_LIGHT][] = $marketingPlan;
-            }
+//            if (strstr($marketingPlan->name, self::GROUP_STANDARD)) {
+//                $groups['packages'][self::GROUP_STANDARD][] = $marketingPlan;
+//            }
+//            if (strstr($marketingPlan->name, self::GROUP_CRYPTO_BUSINESS)) {
+//                $groups['packages'][self::GROUP_CRYPTO_BUSINESS][] = $marketingPlan;
+//            }
+//            if ($marketingPlan->name === self::GROUP_BUSINESS) {
+//                $groups['packages'][self::GROUP_BUSINESS][] = $marketingPlan;
+//            }
+//            if (strstr($marketingPlan->name, self::GROUP_MINI)) {
+//                $groups['packages'][self::GROUP_MINI][] = $marketingPlan;
+//            }
+//            if (strstr($marketingPlan->name, self::GROUP_NEW_LIGHT)) {
+//                $groups['packages'][self::GROUP_NEW_LIGHT][] = $marketingPlan;
+//            }
         }
-        //dd($groups);
+//        dd($groups);
         return $groups;
     }
 
