@@ -913,7 +913,8 @@
                                 <tr>
                                     <th>{{$item->created_at}}</th>
                                     <td>
-                                        @if(isset($item->marketingPlan->name))
+                                        {{-- Забагато хард-коду --}}
+                                        {{--@if(isset($item->marketingPlan->name))
                                             @if(strpos($item->marketingPlan->name,'Standard') !== false)
                                                 SERVER 1
                                             @endif
@@ -923,7 +924,12 @@
                                             @if(strpos($item->marketingPlan->name,'Mini') !== false)
                                                 SERVER 3
                                             @endif
+                                        @endif --}}
+
+                                        @if(isset($item->marketingPlan->name))
+                                            {{ $item->marketingPlan->name }}
                                         @endif
+
                                         {{-- (isset($item->marketingPlan->name)) ? $item->marketingPlan->name : '' --}}
                                     </td>
                                     <td>{{$item->$codeInvested}} {{strtoupper($item->marketingPlan->currency_type)}}</td>
@@ -946,7 +952,7 @@
                                         @if($item->id)
                                             @if ($item->marketingPlan->isUnlimitedDuration() && $item->isStopped())
                                                 @lang('website_home.package.stopped'):
-                                                <br>{{\Carbon\Carbon::now($item->stopped_at)->format('d.m.Y')}}<br>
+                                                <br>{{\Carbon\Carbon::now($item->stopped_at)->format('d.m.Y')}}<br>222
                                             @endif
                                             @if(!$item->isStopped() && $item->marketingPlan->available_for_withdrawal == 1 && is_null($item->end_at) && $item->days_left > 30)
                                                 @if (
@@ -1030,7 +1036,6 @@
             </div>
         </div>
 
-
         <div id="modal-guide-new-light" class="modal fade" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -1043,7 +1048,6 @@
                 </div>
             </div>
         </div>
-
 
         <div id="closeInvestment" class="modal fade" aria-hidden="true">
             <div class="modal-dialog">
