@@ -104,11 +104,7 @@ class MarketingPlan extends Model
      */
     public function isNewByIdAndName(string $group = ''): bool
     {
-//        dump($this->id >= 1 && $this->id <= 27);
-//        dump($this->id);
-//        dump($this->name);
-//        dd($group);
-        $isId = $this->id >= 12 && $this->id <= 27;
+        $isId = $this->id >= 1 && $this->id <= 27;
 
         $isName = $this->name === $group;
 
@@ -118,9 +114,7 @@ class MarketingPlan extends Model
             //}
         }
 
-
-        return true && true;
-//        return $isId && $isName;
+        return $isId && $isName;
     }
 
 
@@ -146,7 +140,7 @@ class MarketingPlan extends Model
      */
     public function isUnlimitedDuration(): bool
     {
-        return $this->isNewByIdAndName(MarketingPlan::GROUP_LIGHT) || $this->isNewByIdAndName(MarketingPlan::GROUP_NEW_LIGHT);
+        return $this->isNewByIdAndName(MarketingPlan::GROUP_LIGHT) || $this->isNewByIdAndName(MarketingPlan::GROUP_NEW_LIGHT) || $this->isNewByIdAndName(MarketingPlan::GROUP_REGULAR);
     }
 
     /**

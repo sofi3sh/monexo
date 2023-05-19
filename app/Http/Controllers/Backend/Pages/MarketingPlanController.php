@@ -106,6 +106,8 @@ class MarketingPlanController extends Controller
                 $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_BUSINESS) ||
                 $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_CRYPTO_BUSINESS) ||
                 $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_LIGHT) ||
+                $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_REGULAR) ||
+                $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_RANDOM) ||
                 $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_NEW_LIGHT)
             )
         ) {
@@ -174,12 +176,12 @@ class MarketingPlanController extends Controller
 //            dd($marketing_plan);
 //        }
 
-        // если новый пакет типа Standard
+        // если новый пакет типа Regular
         if ($marketing_plan->isNewByIdAndName(MarketingPlan::GROUP_REGULAR)) {
 
             $userMarketingPlanActive = $this->getUserActivePlanByGroup(MarketingPlan::GROUP_REGULAR);
 
-            // если есть активный пакет типа Standard
+            // если есть активный пакет типа Regular
             if ($userMarketingPlanActive) {
 
                 // скидка с учетом активного пакета
@@ -226,7 +228,6 @@ class MarketingPlanController extends Controller
         // но по идее это делать не нужно, потому что новый пакет должен будет создаться с полной суммой, чтобы
         // процент начислялись на полную сумму нового пакета
         if ( Auth()->user()->balance_usd < $invest_usd ) {
-            // якщо баланс користувача меньший ніж сума бажаної інвестиції, то редірект назад
             return redirect()
                 ->back()
                 ->withErrors(__('website_home.package.error_not_enough_money', ['currency' => 'USD']));
@@ -309,6 +310,10 @@ class MarketingPlanController extends Controller
                 $marketing_plan_name = 'SERVER 2';
             } elseif (strpos($marketing_plan->name, 'Mini') !==  false) {
                 $marketing_plan_name = 'SERVER 3';
+            } elseif (strpos($marketing_plan->name, 'Regular') !==  false) {
+                $marketing_plan_name = 'Regular';
+            } elseif (strpos($marketing_plan->name, 'Random') !==  false) {
+                $marketing_plan_name = 'Random';
             }
 
             $data = [
