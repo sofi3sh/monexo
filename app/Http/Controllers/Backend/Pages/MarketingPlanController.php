@@ -35,18 +35,13 @@ class MarketingPlanController extends Controller
         // получение новых пакетов, разбитых на группы
         $marketingPlanGroups = MarketingPlan::getGroups();
 
+
         $marketingPlans = UserMarketingPlan::with('marketingPlan')->where('user_id', Auth()->user()->id)->get();
         // получение активного маркетингово плана из группы Standard (используется для апгрейда)
         $userMarketingPlanStandardActive = $this->getUserActivePlanByGroup(MarketingPlan::GROUP_STANDARD);
 
         // получение активного маркетингово плана из группы Business (используется для апгрейда)
         $userMarketingPlanBusinessActive = $this->getUserActivePlanByGroup(MarketingPlan::GROUP_BUSINESS);
-
-        // получение активного маркетингово плана из группы Regular (используется для апгрейда)
-        $userMarketingPlanRegularActive = $this->getUserActivePlanByGroup(MarketingPlan::GROUP_REGULAR);
-
-        // получение активного маркетингово плана из группы Random (используется для апгрейда)
-        $userMarketingPlanRandomActive = $this->getUserActivePlanByGroup(MarketingPlan::GROUP_RANDOM);
 
         // Если пакет бизнесс уже открыт то уменьшим сумму минимальной доинвестиции
         //if ( isset( $userMarketingPlanBusinessActive ) ) {
@@ -60,9 +55,7 @@ class MarketingPlanController extends Controller
             'marketingPlans',
             'marketingPlanGroups',
              'userMarketingPlanStandardActive',
-            'userMarketingPlanBusinessActive',
-            'userMarketingPlanRegularActive',
-            'userMarketingPlanRandomActive'
+            'userMarketingPlanBusinessActive'
         ));
     }
 
@@ -106,8 +99,6 @@ class MarketingPlanController extends Controller
                 $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_BUSINESS) ||
                 $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_CRYPTO_BUSINESS) ||
                 $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_LIGHT) ||
-                $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_REGULAR) ||
-                $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_RANDOM) ||
                 $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_NEW_LIGHT)
             )
         ) {
@@ -152,7 +143,7 @@ class MarketingPlanController extends Controller
     public function invest(Request $request)
     {
         $this->validate($request, [
-            'invest_usd' => 'required|integer|min:1|max:500000',
+            'invest_usd' => 'required|integer|min:1|max:999999',
             'marketing_plan_id' => 'required|integer',
         ]);
 
@@ -172,16 +163,11 @@ class MarketingPlanController extends Controller
         // количество дней нового пакета, которое нужно отнять
         $daysDiff = 0;
 
-//        if ($marketing_plan->isNewByIdAndName(MarketingPlan::GROUP_REGULAR)) {
-//            dd($marketing_plan);
-//        }
+        // если новый пакет типа Standard
+        if ($marketing_plan->isNewByIdAndName(MarketingPlan::GROUP_STANDARD)) {
+            $userMarketingPlanActive = $this->getUserActivePlanByGroup(MarketingPlan::GROUP_STANDARD);
 
-        // если новый пакет типа Regular
-        if ($marketing_plan->isNewByIdAndName(MarketingPlan::GROUP_REGULAR)) {
-
-            $userMarketingPlanActive = $this->getUserActivePlanByGroup(MarketingPlan::GROUP_REGULAR);
-
-            // если есть активный пакет типа Regular
+            // если есть активный пакет типа Standard
             if ($userMarketingPlanActive) {
 
                 // скидка с учетом активного пакета
@@ -242,7 +228,7 @@ class MarketingPlanController extends Controller
         try {
             DB::beginTransaction();
             if ($userMarketingPlanActive) {
-                if (!$userMarketingPlanActive->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_REGULAR)) {
+                if (!$userMarketingPlanActive->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_STANDARD)) {
                     $userMarketingPlanActive->withdrawProfit();
                 }
                 $userMarketingPlanActive->stop();
@@ -255,7 +241,6 @@ class MarketingPlanController extends Controller
             $parents = $user->getAllParents();
             $i = 0;
             foreach($parents as $p){
-
                 // уведомляем партнера, что реферал купил пакет
                 $alert                = new Alert;
                 $alert->user_id       = $p['id'];
@@ -296,6 +281,7 @@ class MarketingPlanController extends Controller
                 $alert->save();
 
             }
+
             $this->accrueBonuses(Auth()->user()->id, $request->invest_usd);
             $this->writeOffFundsWhenInvesting($request->invest_usd ,'usd');
 
@@ -308,11 +294,9 @@ class MarketingPlanController extends Controller
                 $marketing_plan_name = 'SERVER 1';
             } elseif (strpos($marketing_plan->name, 'Business') !==  false) {
                 $marketing_plan_name = 'SERVER 2';
-            } elseif (strpos($marketing_plan->name, 'Mini') !==  false) {
-                $marketing_plan_name = 'SERVER 3';
-            } elseif (strpos($marketing_plan->name, 'Regular') !==  false) {
+            } elseif (strpos($marketing_plan->name, 'Light') !==  false) {
                 $marketing_plan_name = 'Regular';
-            } elseif (strpos($marketing_plan->name, 'Random') !==  false) {
+            } elseif (strpos($marketing_plan->name, 'Mini') !==  false) {
                 $marketing_plan_name = 'Random';
             }
 
