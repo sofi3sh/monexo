@@ -135,7 +135,6 @@ return [
         'force_close' => 'Досрочное закрытие вклада',
         'available_withdraw' => 'Тело доступно к снятию',
         'no' => 'нет',
-        'yes' => 'да',
         'invest_body' => 'Тело&nbsp;в&nbsp;выплаты',
         'enable' => 'включено',
         'disable' => 'не&nbsp;включено',
