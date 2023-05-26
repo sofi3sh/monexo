@@ -118,6 +118,11 @@ declare class AbstractLibraryPlugin<T> {
 		entryName: string,
 		libraryContext: LibraryContext<T>
 	): void;
+	embedInRuntimeBailout(
+		module: Module,
+		renderContext: RenderContextObject,
+		libraryContext: LibraryContext<T>
+	): undefined | string;
 	runtimeRequirements(
 		chunk: Chunk,
 		set: Set<string>,
@@ -128,12 +133,19 @@ declare class AbstractLibraryPlugin<T> {
 		renderContext: RenderContextObject,
 		libraryContext: LibraryContext<T>
 	): Source;
+	renderStartup(
+		source: Source,
+		module: Module,
+		renderContext: StartupRenderContext,
+		libraryContext: LibraryContext<T>
+	): Source;
 	chunkHash(
 		chunk: Chunk,
 		hash: Hash,
 		chunkHashContext: ChunkHashContext,
 		libraryContext: LibraryContext<T>
 	): void;
+	static COMMON_LIBRARY_NAME_MESSAGE: string;
 }
 declare class AggressiveMergingPlugin {
 	constructor(options?: any);
@@ -220,6 +232,10 @@ declare interface AssetEmittedInfo {
 	outputPath: string;
 	targetPath: string;
 }
+type AssetFilterItemTypes =
+	| string
+	| RegExp
+	| ((name: string, asset: StatsAsset) => boolean);
 
 /**
  * Options object for data url generation.
@@ -799,6 +815,9 @@ declare class ChunkGraph {
 	getChunkFullHashModulesIterable(
 		chunk: Chunk
 	): undefined | Iterable<RuntimeModule>;
+	getChunkFullHashModulesSet(
+		chunk: Chunk
+	): undefined | ReadonlySet<RuntimeModule>;
 	getChunkEntryModulesWithChunkGroupIterable(
 		chunk: Chunk
 	): Iterable<[Module, undefined | Entrypoint]>;
@@ -833,6 +852,11 @@ declare class ChunkGraph {
 		runtime: RuntimeSpec
 	): ReadonlySet<string>;
 	getChunkRuntimeRequirements(chunk: Chunk): ReadonlySet<string>;
+	getModuleGraphHash(
+		module?: any,
+		runtime?: any,
+		withConnections?: boolean
+	): any;
 	getTreeRuntimeRequirements(chunk: Chunk): ReadonlySet<string>;
 	static getChunkGraphForModule(
 		module: Module,
@@ -1017,6 +1041,48 @@ declare abstract class ChunkTemplate {
 	}>;
 	readonly outputOptions: Output;
 }
+
+/**
+ * Advanced options for cleaning assets.
+ */
+declare interface CleanOptions {
+	/**
+	 * Log the assets that should be removed instead of deleting them.
+	 */
+	dry?: boolean;
+
+	/**
+	 * Keep these assets.
+	 */
+	keep?: string | RegExp | ((filename: string) => boolean);
+}
+declare class CleanPlugin {
+	constructor(options?: CleanOptions);
+	options: {
+		/**
+		 * Log the assets that should be removed instead of deleting them.
+		 */
+		dry: boolean;
+		/**
+		 * Keep these assets.
+		 */
+		keep?: string | RegExp | ((filename: string) => boolean);
+	};
+
+	/**
+	 * Apply the plugin
+	 */
+	apply(compiler: Compiler): void;
+	static getCompilationHooks(
+		compilation: Compilation
+	): CleanPluginCompilationHooks;
+}
+declare interface CleanPluginCompilationHooks {
+	/**
+	 * when returning true the file/directory will be kept during cleaning, returning false will clean it and ignore the following plugins and config
+	 */
+	keep: SyncBailHook<[string], boolean>;
+}
 declare interface CodeGenerationContext {
 	/**
 	 * the dependency templates
@@ -1063,16 +1129,23 @@ declare interface CodeGenerationResult {
 	 * the runtime requirements
 	 */
 	runtimeRequirements: ReadonlySet<string>;
+
+	/**
+	 * a hash of the code generation result (will be automatically calculated from sources and runtimeRequirements if not provided)
+	 */
+	hash?: string;
 }
 declare abstract class CodeGenerationResults {
 	map: Map<Module, RuntimeSpecMap<CodeGenerationResult>>;
 	get(module: Module, runtime: RuntimeSpec): CodeGenerationResult;
+	has(module: Module, runtime: RuntimeSpec): boolean;
 	getSource(module: Module, runtime: RuntimeSpec, sourceType: string): Source;
 	getRuntimeRequirements(
 		module: Module,
 		runtime: RuntimeSpec
 	): ReadonlySet<string>;
 	getData(module: Module, runtime: RuntimeSpec, key: string): any;
+	getHash(module: Module, runtime: RuntimeSpec): any;
 	add(module: Module, runtime: RuntimeSpec, result: CodeGenerationResult): void;
 }
 type CodeValue =
@@ -1268,11 +1341,11 @@ declare class Compilation {
 	moduleGraph: ModuleGraph;
 	chunkGraph?: ChunkGraph;
 	codeGenerationResults: CodeGenerationResults;
-	factorizeQueue: AsyncQueue<FactorizeModuleOptions, string, Module>;
+	processDependenciesQueue: AsyncQueue<Module, Module, Module>;
 	addModuleQueue: AsyncQueue<Module, string, Module>;
+	factorizeQueue: AsyncQueue<FactorizeModuleOptions, string, Module>;
 	buildQueue: AsyncQueue<Module, Module, Module>;
 	rebuildQueue: AsyncQueue<Module, Module, Module>;
-	processDependenciesQueue: AsyncQueue<Module, Module, Module>;
 
 	/**
 	 * Modules in value are building during the build of Module in key.
@@ -1437,7 +1510,12 @@ declare class Compilation {
 	sortItemsWithChunkIds(): void;
 	summarizeDependencies(): void;
 	createModuleHashes(): void;
-	createHash(): void;
+	createHash(): {
+		module: Module;
+		hash: string;
+		runtime: RuntimeSpec;
+		runtimes: RuntimeSpec[];
+	}[];
 	fullHash?: string;
 	hash?: string;
 	emitAsset(file: string, source: Source, assetInfo?: AssetInfo): void;
@@ -1584,7 +1662,13 @@ declare interface CompilationHooksJavascriptModulesPlugin {
 	renderChunk: SyncWaterfallHook<[Source, RenderContextObject]>;
 	renderMain: SyncWaterfallHook<[Source, RenderContextObject]>;
 	render: SyncWaterfallHook<[Source, RenderContextObject]>;
+	renderStartup: SyncWaterfallHook<[Source, Module, StartupRenderContext]>;
 	renderRequire: SyncWaterfallHook<[string, RenderBootstrapContext]>;
+	inlineInRuntimeBailout: SyncBailHook<
+		[Module, RenderBootstrapContext],
+		string
+	>;
+	embedInRuntimeBailout: SyncBailHook<[Module, RenderContextObject], string>;
 	chunkHash: SyncHook<[Chunk, Hash, ChunkHashContext]>;
 	useSourceMap: SyncBailHook<[Chunk, RenderContextObject], boolean>;
 }
@@ -2277,7 +2361,10 @@ declare class Dependency {
 	): (string[] | ReferencedExport)[];
 	getCondition(
 		moduleGraph: ModuleGraph
-	): (arg0: ModuleGraphConnection, arg1: RuntimeSpec) => ConnectionState;
+	):
+		| null
+		| false
+		| ((arg0: ModuleGraphConnection, arg1: RuntimeSpec) => ConnectionState);
 
 	/**
 	 * Returns the exported names
@@ -2979,6 +3066,14 @@ declare interface Experiments {
 				 * Enable/disable lazy compilation for entries.
 				 */
 				entries?: boolean;
+				/**
+				 * Enable/disable lazy compilation for import() modules.
+				 */
+				imports?: boolean;
+				/**
+				 * Specify which entrypoints or import()ed modules should be lazily compiled. This is matched with the imported module and not the entrypoint name.
+				 */
+				test?: string | RegExp | ((module: Module) => boolean);
 		  };
 
 	/**
@@ -3037,6 +3132,7 @@ declare abstract class ExportInfo {
 		runtime: RuntimeSpec
 	): boolean;
 	setUsed(newValue: UsageStateType, runtime: RuntimeSpec): boolean;
+	unsetTarget(key?: any): boolean;
 	setTarget(
 		key?: any,
 		connection?: ModuleGraphConnection,
@@ -3085,7 +3181,11 @@ declare abstract class ExportInfo {
 		resolveTargetFilter: (arg0: {
 			module: Module;
 			export?: string[];
-		}) => boolean
+		}) => boolean,
+		updateOriginalConnection?: (arg0: {
+			module: Module;
+			export?: string[];
+		}) => ModuleGraphConnection
 	): undefined | { module: Module; export?: string[] };
 	createNestedExportsInfo(): undefined | ExportsInfo;
 	getNestedExportsInfo(): undefined | ExportsInfo;
@@ -3139,6 +3239,11 @@ declare interface ExportSpec {
 	 * when reexported: from which export
 	 */
 	export?: null | string[];
+
+	/**
+	 * export is not visible, because another export blends over it
+	 */
+	hidden?: boolean;
 }
 type ExportedVariableInfo = string | ScopeInfo | VariableInfo;
 declare abstract class ExportsInfo {
@@ -3199,6 +3304,11 @@ declare interface ExportsSpec {
 	excludeExports?: Set<string>;
 
 	/**
+	 * list of maybe prior exposed, but now hidden exports
+	 */
+	hideExports?: Set<string>;
+
+	/**
 	 * when reexported: from which module
 	 */
 	from?: ModuleGraphConnection;
@@ -3228,6 +3338,11 @@ declare interface ExposesConfig {
 	 * Request to a module that should be exposed by this container.
 	 */
 	import: string | string[];
+
+	/**
+	 * Custom chunk name for the exposed module.
+	 */
+	name?: string;
 }
 
 /**
@@ -3718,6 +3833,11 @@ declare interface GenerateContext {
 	 * which kind of code should be generated
 	 */
 	type: string;
+
+	/**
+	 * get access to the code generation data
+	 */
+	getData?: () => Map<string, any>;
 }
 declare class Generator {
 	constructor();
@@ -4329,7 +4449,7 @@ declare class JavascriptParser extends Parser {
 		varDeclarationLet: HookMap<SyncBailHook<[Declaration], boolean | void>>;
 		varDeclarationConst: HookMap<SyncBailHook<[Declaration], boolean | void>>;
 		varDeclarationVar: HookMap<SyncBailHook<[Declaration], boolean | void>>;
-		pattern: HookMap<SyncBailHook<any, any>>;
+		pattern: HookMap<SyncBailHook<[Identifier], boolean | void>>;
 		canRename: HookMap<SyncBailHook<[Expression], boolean | void>>;
 		rename: HookMap<SyncBailHook<[Expression], boolean | void>>;
 		assign: HookMap<SyncBailHook<[AssignmentExpression], boolean | void>>;
@@ -4798,7 +4918,7 @@ declare interface JavascriptParserOptions {
 	/**
 	 * Enable/disable parsing of new URL() syntax.
 	 */
-	url?: boolean;
+	url?: boolean | "relative";
 
 	/**
 	 * Disable or configure parsing of WebWorker syntax like new Worker() or navigator.serviceWorker.register().
@@ -4950,9 +5070,13 @@ declare interface KnownNormalizedStatsOptions {
 	groupAssetsByPath: boolean;
 	groupAssetsByExtension: boolean;
 	assetsSpace: number;
-	excludeAssets: Function[];
-	excludeModules: Function[];
-	warningsFilter: Function[];
+	excludeAssets: ((value: string, asset: StatsAsset) => boolean)[];
+	excludeModules: ((
+		name: string,
+		module: StatsModule,
+		type: "module" | "chunk" | "root-of-chunk" | "nested"
+	) => boolean)[];
+	warningsFilter: ((warning: StatsError, textValue: string) => boolean)[];
 	cachedModules: boolean;
 	orphanModules: boolean;
 	dependentModules: boolean;
@@ -4972,8 +5096,110 @@ declare interface KnownNormalizedStatsOptions {
 	chunkModulesSpace: number;
 	nestedModulesSpace: number;
 	logging: false | "none" | "verbose" | "error" | "warn" | "info" | "log";
-	loggingDebug: Function[];
+	loggingDebug: ((value: string) => boolean)[];
 	loggingTrace: boolean;
+}
+declare interface KnownStatsAsset {
+	type: string;
+	name: string;
+	info: AssetInfo;
+	size: number;
+	emitted: boolean;
+	comparedForEmit: boolean;
+	cached: boolean;
+	related?: StatsAsset[];
+	chunkNames?: (string | number)[];
+	chunkIdHints?: (string | number)[];
+	chunks?: (string | number)[];
+	auxiliaryChunkNames?: (string | number)[];
+	auxiliaryChunks?: (string | number)[];
+	auxiliaryChunkIdHints?: (string | number)[];
+	filteredRelated?: number;
+	isOverSizeLimit?: boolean;
+}
+declare interface KnownStatsChunk {
+	rendered: boolean;
+	initial: boolean;
+	entry: boolean;
+	recorded: boolean;
+	reason?: string;
+	size: number;
+	sizes?: Record<string, number>;
+	names?: string[];
+	idHints?: string[];
+	runtime?: string[];
+	files?: string[];
+	auxiliaryFiles?: string[];
+	hash: string;
+	childrenByOrder?: Record<string, (string | number)[]>;
+	id?: string | number;
+	siblings?: (string | number)[];
+	parents?: (string | number)[];
+	children?: (string | number)[];
+	modules?: StatsModule[];
+	filteredModules?: number;
+	origins?: StatsChunkOrigin[];
+}
+declare interface KnownStatsChunkGroup {
+	name?: string;
+	chunks?: (string | number)[];
+	assets?: { name: string; size?: number }[];
+	filteredAssets?: number;
+	assetsSize?: number;
+	auxiliaryAssets?: { name: string; size?: number }[];
+	filteredAuxiliaryAssets?: number;
+	auxiliaryAssetsSize?: number;
+	children?: { [index: string]: StatsChunkGroup[] };
+	childAssets?: { [index: string]: string[] };
+	isOverSizeLimit?: boolean;
+}
+declare interface KnownStatsChunkOrigin {
+	module?: string;
+	moduleIdentifier?: string;
+	moduleName?: string;
+	loc?: string;
+	request?: string;
+	moduleId?: string | number;
+}
+declare interface KnownStatsCompilation {
+	env?: any;
+	name?: string;
+	hash?: string;
+	version?: string;
+	time?: number;
+	builtAt?: number;
+	needAdditionalPass?: boolean;
+	publicPath?: string;
+	outputPath?: string;
+	assetsByChunkName?: Record<string, string[]>;
+	assets?: StatsAsset[];
+	filteredAssets?: number;
+	chunks?: StatsChunk[];
+	modules?: StatsModule[];
+	filteredModules?: number;
+	entrypoints?: Record<string, StatsChunkGroup>;
+	namedChunkGroups?: Record<string, StatsChunkGroup>;
+	errors?: StatsError[];
+	errorsCount?: number;
+	warnings?: StatsError[];
+	warningsCount?: number;
+	children?: StatsCompilation[];
+	logging?: Record<string, StatsLogging>;
+}
+declare interface KnownStatsError {
+	message: string;
+	chunkName?: string;
+	chunkEntry?: boolean;
+	chunkInitial?: boolean;
+	file?: string;
+	moduleIdentifier?: string;
+	moduleName?: string;
+	loc?: string;
+	chunkId?: string | number;
+	moduleId?: string | number;
+	moduleTrace?: any;
+	details?: any;
+	stack?: any;
 }
 declare interface KnownStatsFactoryContext {
 	type: string;
@@ -4986,14 +5212,87 @@ declare interface KnownStatsFactoryContext {
 	cachedGetErrors?: (arg0: Compilation) => WebpackError[];
 	cachedGetWarnings?: (arg0: Compilation) => WebpackError[];
 }
+declare interface KnownStatsLogging {
+	entries: StatsLoggingEntry[];
+	filteredEntries: number;
+	debug: boolean;
+}
+declare interface KnownStatsLoggingEntry {
+	type: string;
+	message: string;
+	trace?: string[];
+	children?: StatsLoggingEntry[];
+	args?: any[];
+	time?: number;
+}
+declare interface KnownStatsModule {
+	type?: string;
+	moduleType?: string;
+	layer?: string;
+	identifier?: string;
+	name?: string;
+	nameForCondition?: string;
+	index?: number;
+	preOrderIndex?: number;
+	index2?: number;
+	postOrderIndex?: number;
+	size?: number;
+	sizes?: { [index: string]: number };
+	cacheable?: boolean;
+	built?: boolean;
+	codeGenerated?: boolean;
+	cached?: boolean;
+	optional?: boolean;
+	orphan?: boolean;
+	id?: string | number;
+	issuerId?: string | number;
+	chunks?: (string | number)[];
+	assets?: (string | number)[];
+	dependent?: boolean;
+	issuer?: string;
+	issuerName?: string;
+	issuerPath?: StatsModuleIssuer[];
+	failed?: boolean;
+	errors?: number;
+	warnings?: number;
+	profile?: StatsProfile;
+	reasons?: StatsModuleReason[];
+	usedExports?: boolean | string[];
+	providedExports?: string[];
+	optimizationBailout?: string[];
+	depth?: number;
+	modules?: StatsModule[];
+	filteredModules?: number;
+	source?: string | Buffer;
+}
+declare interface KnownStatsModuleIssuer {
+	identifier?: string;
+	name?: string;
+	id?: string | number;
+	profile?: StatsProfile;
+}
+declare interface KnownStatsModuleReason {
+	moduleIdentifier?: string;
+	module?: string;
+	moduleName?: string;
+	resolvedModuleIdentifier?: string;
+	resolvedModule?: string;
+	type?: string;
+	active: boolean;
+	explanation?: string;
+	userRequest?: string;
+	loc?: string;
+	moduleId?: string | number;
+	resolvedModuleId?: string | number;
+}
 declare interface KnownStatsPrinterContext {
 	type?: string;
-	compilation?: Object;
-	chunkGroup?: Object;
-	asset?: Object;
-	module?: Object;
-	chunk?: Object;
-	moduleReason?: Object;
+	compilation?: StatsCompilation;
+	chunkGroup?: StatsChunkGroup;
+	asset?: StatsAsset;
+	module?: StatsModule;
+	chunk?: StatsChunk;
+	moduleReason?: StatsModuleReason;
 	bold?: (str: string) => string;
 	yellow?: (str: string) => string;
 	red?: (str: string) => string;
@@ -5011,6 +5310,18 @@ declare interface KnownStatsPrinterContext {
 	formatFlag?: (flag: string) => string;
 	formatTime?: (time: number, boldQuantity?: boolean) => string;
 	chunkGroupKind?: string;
+}
+declare interface KnownStatsProfile {
+	total: number;
+	resolving: number;
+	restoring: number;
+	building: number;
+	integration: number;
+	storing: number;
+	additionalResolving: number;
+	additionalIntegration: number;
+	factory: number;
+	dependencies: number;
 }
 declare class LazySet<T> {
 	constructor(iterable?: Iterable<T>);
@@ -5622,6 +5933,14 @@ declare interface ModuleFederationPluginOptions {
 	 */
 	shared?: (string | SharedObject)[] | SharedObject;
 }
+type ModuleFilterItemTypes =
+	| string
+	| RegExp
+	| ((
+			name: string,
+			module: StatsModule,
+			type: "module" | "chunk" | "root-of-chunk" | "nested"
+	  ) => boolean);
 declare class ModuleGraph {
 	constructor();
 	setParents(
@@ -5660,6 +5979,9 @@ declare class ModuleGraph {
 	getResolvedOrigin(dependency: Dependency): Module;
 	getIncomingConnections(module: Module): Iterable<ModuleGraphConnection>;
 	getOutgoingConnections(module: Module): Iterable<ModuleGraphConnection>;
+	getIncomingConnectionsByOriginModule(
+		module: Module
+	): Map<Module, ReadonlyArray<ModuleGraphConnection>>;
 	getProfile(module: Module): null | ModuleProfile;
 	setProfile(module: Module, profile: null | ModuleProfile): void;
 	getIssuer(module: Module): null | Module;
@@ -5692,6 +6014,7 @@ declare class ModuleGraph {
 	isAsync(module: Module): boolean;
 	setAsync(module: Module): void;
 	getMeta(thing?: any): Object;
+	getMetaIfExisting(thing?: any): Object;
 	static getModuleGraphForModule(
 		module: Module,
 		deprecateMessage: string,
@@ -5705,19 +6028,18 @@ declare class ModuleGraph {
 }
 declare class ModuleGraphConnection {
 	constructor(
-		originModule: undefined | Module,
-		dependency: undefined | Dependency,
+		originModule: null | Module,
+		dependency: null | Dependency,
 		module: Module,
 		explanation?: string,
 		weak?: boolean,
-		condition?: (
-			arg0: ModuleGraphConnection,
-			arg1: RuntimeSpec
-		) => ConnectionState
+		condition?:
+			| false
+			| ((arg0: ModuleGraphConnection, arg1: RuntimeSpec) => ConnectionState)
 	);
-	originModule?: Module;
-	resolvedOriginModule?: Module;
-	dependency?: Dependency;
+	originModule: null | Module;
+	resolvedOriginModule: null | Module;
+	dependency: null | Dependency;
 	resolvedModule: Module;
 	module: Module;
 	weak: boolean;
@@ -5891,33 +6213,40 @@ declare interface ModulePathData {
 }
 declare abstract class ModuleProfile {
 	startTime: number;
+	factoryStartTime: number;
+	factoryEndTime: number;
 	factory: number;
+	factoryParallelismFactor: number;
+	restoringStartTime: number;
+	restoringEndTime: number;
 	restoring: number;
+	restoringParallelismFactor: number;
+	integrationStartTime: number;
+	integrationEndTime: number;
 	integration: number;
+	integrationParallelismFactor: number;
+	buildingStartTime: number;
+	buildingEndTime: number;
 	building: number;
+	buildingParallelismFactor: number;
+	storingStartTime: number;
+	storingEndTime: number;
 	storing: number;
+	storingParallelismFactor: number;
+	additionalFactoryTimes: any;
 	additionalFactories: number;
+	additionalFactoriesParallelismFactor: number;
 	additionalIntegration: number;
 	markFactoryStart(): void;
-	factoryStartTime?: number;
 	markFactoryEnd(): void;
-	factoryEndTime?: number;
 	markRestoringStart(): void;
-	restoringStartTime?: number;
 	markRestoringEnd(): void;
-	restoringEndTime?: number;
 	markIntegrationStart(): void;
-	integrationStartTime?: number;
 	markIntegrationEnd(): void;
-	integrationEndTime?: number;
 	markBuildingStart(): void;
-	buildingStartTime?: number;
 	markBuildingEnd(): void;
-	buildingEndTime?: number;
 	markStoringStart(): void;
-	storingStartTime?: number;
 	markStoringEnd(): void;
-	storingEndTime?: number;
 
 	/**
 	 * Merge this profile into another one
@@ -5957,7 +6286,10 @@ declare abstract class ModuleTemplate {
 	readonly runtimeTemplate: any;
 }
 declare class MultiCompiler {
-	constructor(compilers: Compiler[] | Record<string, Compiler>);
+	constructor(
+		compilers: Compiler[] | Record<string, Compiler>,
+		options: MultiCompilerOptions
+	);
 	hooks: Readonly<{
 		done: SyncHook<[MultiStats]>;
 		invalid: MultiHook<SyncHook<[null | string, number]>>;
@@ -5969,7 +6301,7 @@ declare class MultiCompiler {
 	compilers: Compiler[];
 	dependencies: WeakMap<Compiler, string[]>;
 	running: boolean;
-	readonly options: WebpackOptionsNormalized[];
+	readonly options: WebpackOptionsNormalized[] & MultiCompilerOptions;
 	readonly outputPath: string;
 	inputFileSystem: InputFileSystem;
 	outputFileSystem: OutputFileSystem;
@@ -5991,22 +6323,18 @@ declare class MultiCompiler {
 	purgeInputFileSystem(): void;
 	close(callback: CallbackFunction<void>): void;
 }
+declare interface MultiCompilerOptions {
+	/**
+	 * how many Compilers are allows to run at the same time in parallel
+	 */
+	parallelism?: number;
+}
 declare abstract class MultiStats {
 	stats: Stats[];
 	readonly hash: string;
 	hasErrors(): boolean;
 	hasWarnings(): boolean;
-	toJson(
-		options?: any
-	): {
-		children: any[];
-		version: any;
-		hash: string;
-		errors: any[];
-		warnings: any[];
-		errorsCount: number;
-		warningsCount: number;
-	};
+	toJson(options?: any): StatsCompilation;
 	toString(options?: any): string;
 }
 declare abstract class MultiWatching {
@@ -6342,7 +6670,47 @@ declare class NormalModuleReplacementPlugin {
 	apply(compiler: Compiler): void;
 }
 type NormalizedStatsOptions = KnownNormalizedStatsOptions &
-	StatsOptions &
+	Omit<
+		StatsOptions,
+		| "context"
+		| "requestShortener"
+		| "chunkGroups"
+		| "chunksSort"
+		| "modulesSort"
+		| "chunkModulesSort"
+		| "nestedModulesSort"
+		| "assetsSort"
+		| "ids"
+		| "cachedAssets"
+		| "groupAssetsByEmitStatus"
+		| "groupAssetsByPath"
+		| "groupAssetsByExtension"
+		| "assetsSpace"
+		| "excludeAssets"
+		| "excludeModules"
+		| "warningsFilter"
+		| "cachedModules"
+		| "orphanModules"
+		| "dependentModules"
+		| "runtimeModules"
+		| "groupModulesByCacheStatus"
+		| "groupModulesByLayer"
+		| "groupModulesByAttributes"
+		| "groupModulesByPath"
+		| "groupModulesByExtension"
+		| "groupModulesByType"
+		| "entrypoints"
+		| "chunkGroupAuxiliary"
+		| "chunkGroupChildren"
+		| "chunkGroupMaxAssets"
+		| "modulesSpace"
+		| "chunkModulesSpace"
+		| "nestedModulesSpace"
+		| "logging"
+		| "loggingDebug"
+		| "loggingTrace"
+		| "_env"
+	> &
 	Record<string, any>;
 declare interface ObjectDeserializerContext {
 	read: () => any;
@@ -6536,7 +6904,7 @@ declare interface OptimizationSplitChunksCacheGroup {
 	/**
 	 * Select chunks for determining cache group content (defaults to "initial", "initial" and "all" requires adding these chunks to the HTML).
 	 */
-	chunks?: "initial" | "async" | "all" | ((chunk: Chunk) => boolean);
+	chunks?: "all" | "initial" | "async" | ((chunk: Chunk) => boolean);
 
 	/**
 	 * Ignore minimum size, minimum chunks and maximum requests and always create chunks for this cache group.
@@ -6658,7 +7026,7 @@ declare interface OptimizationSplitChunksOptions {
 	/**
 	 * Select chunks for determining shared modules (defaults to "async", "initial" and "all" requires adding these chunks to the HTML).
 	 */
-	chunks?: "initial" | "async" | "all" | ((chunk: Chunk) => boolean);
+	chunks?: "all" | "initial" | "async" | ((chunk: Chunk) => boolean);
 
 	/**
 	 * Sets the size types which are used when a number is used for sizes.
@@ -6816,6 +7184,11 @@ declare interface Output {
 	 * The global variable used by webpack for loading of chunks.
 	 */
 	chunkLoadingGlobal?: string;
+
+	/**
+	 * Clean the output directory before emit.
+	 */
+	clean?: boolean | CleanOptions;
 
 	/**
 	 * Check if to be emitted file already exists and have the same content before writing to output filesystem.
@@ -7014,6 +7387,15 @@ declare interface OutputFileSystem {
 		arg2: (arg0?: NodeJS.ErrnoException) => void
 	) => void;
 	mkdir: (arg0: string, arg1: (arg0?: NodeJS.ErrnoException) => void) => void;
+	readdir?: (
+		arg0: string,
+		arg1: (
+			arg0?: NodeJS.ErrnoException,
+			arg1?: (string | Buffer)[] | IDirent[]
+		) => void
+	) => void;
+	rmdir?: (arg0: string, arg1: (arg0?: NodeJS.ErrnoException) => void) => void;
+	unlink?: (arg0: string, arg1: (arg0?: NodeJS.ErrnoException) => void) => void;
 	stat: (
 		arg0: string,
 		arg1: (arg0?: NodeJS.ErrnoException, arg1?: IStats) => void
@@ -7069,6 +7451,11 @@ declare interface OutputNormalized {
 	 * The global variable used by webpack for loading of chunks.
 	 */
 	chunkLoadingGlobal?: string;
+
+	/**
+	 * Clean the output directory before emit.
+	 */
+	clean?: boolean | CleanOptions;
 
 	/**
 	 * Check if to be emitted file already exists and have the same content before writing to output filesystem.
@@ -7440,7 +7827,7 @@ declare interface ProfilingPluginOptions {
 	outputPath?: string;
 }
 declare class ProgressPlugin {
-	constructor(options: ProgressPluginArgument);
+	constructor(options?: ProgressPluginArgument);
 	profile?: null | boolean;
 	handler?: (percentage: number, msg: string, ...args: string[]) => void;
 	modulesCount?: number;
@@ -8728,10 +9115,12 @@ declare abstract class RuntimeSpecMap<T> {
 	get(runtime: RuntimeSpec): T;
 	has(runtime: RuntimeSpec): boolean;
 	set(runtime?: any, value?: any): void;
+	provide(runtime?: any, computer?: any): any;
 	delete(runtime?: any): void;
 	update(runtime?: any, fn?: any): void;
 	keys(): RuntimeSpec[];
 	values(): IterableIterator<T>;
+	readonly size?: number;
 }
 declare abstract class RuntimeSpecSet {
 	add(runtime?: any): void;
@@ -9572,6 +9961,7 @@ declare abstract class StackedMap<K, V> {
 	readonly size: number;
 	createChild(): StackedMap<K, V>;
 }
+type StartupRenderContext = RenderContextObject & { inlined: boolean };
 type Statement =
 	| FunctionDeclaration
 	| VariableDeclaration
@@ -9602,9 +9992,15 @@ declare class Stats {
 	readonly endTime: any;
 	hasWarnings(): boolean;
 	hasErrors(): boolean;
-	toJson(options?: any): any;
+	toJson(options?: string | StatsOptions): StatsCompilation;
 	toString(options?: any): string;
 }
+type StatsAsset = KnownStatsAsset & Record<string, any>;
+type StatsChunk = KnownStatsChunk & Record<string, any>;
+type StatsChunkGroup = KnownStatsChunkGroup & Record<string, any>;
+type StatsChunkOrigin = KnownStatsChunkOrigin & Record<string, any>;
+type StatsCompilation = KnownStatsCompilation & Record<string, any>;
+type StatsError = KnownStatsError & Record<string, any>;
 declare abstract class StatsFactory {
 	hooks: Readonly<{
 		extract: HookMap<SyncBailHook<[Object, any, StatsFactoryContext], any>>;
@@ -9644,6 +10040,11 @@ declare abstract class StatsFactory {
 	): any;
 }
 type StatsFactoryContext = KnownStatsFactoryContext & Record<string, any>;
+type StatsLogging = KnownStatsLogging & Record<string, any>;
+type StatsLoggingEntry = KnownStatsLoggingEntry & Record<string, any>;
+type StatsModule = KnownStatsModule & Record<string, any>;
+type StatsModuleIssuer = KnownStatsModuleIssuer & Record<string, any>;
+type StatsModuleReason = KnownStatsModuleReason & Record<string, any>;
 
 /**
  * Stats options object.
@@ -9804,7 +10205,7 @@ declare interface StatsOptions {
 	/**
 	 * Add details to errors (like resolving log).
 	 */
-	errorDetails?: boolean;
+	errorDetails?: boolean | "auto";
 
 	/**
 	 * Add internal stack trace to errors.
@@ -9828,8 +10229,12 @@ declare interface StatsOptions {
 		| string
 		| boolean
 		| RegExp
-		| FilterItemTypes[]
-		| ((value: string) => boolean);
+		| ModuleFilterItemTypes[]
+		| ((
+				name: string,
+				module: StatsModule,
+				type: "module" | "chunk" | "root-of-chunk" | "nested"
+		  ) => boolean);
 
 	/**
 	 * Suppress assets that match the specified filters. Filters can be Strings, RegExps or Functions.
@@ -9837,8 +10242,8 @@ declare interface StatsOptions {
 	excludeAssets?:
 		| string
 		| RegExp
-		| FilterItemTypes[]
-		| ((value: string) => boolean);
+		| AssetFilterItemTypes[]
+		| ((name: string, asset: StatsAsset) => boolean);
 
 	/**
 	 * Suppress modules that match the specified filters. Filters can be Strings, RegExps, Booleans or Functions.
@@ -9847,8 +10252,12 @@ declare interface StatsOptions {
 		| string
 		| boolean
 		| RegExp
-		| FilterItemTypes[]
-		| ((value: string) => boolean);
+		| ModuleFilterItemTypes[]
+		| ((
+				name: string,
+				module: StatsModule,
+				type: "module" | "chunk" | "root-of-chunk" | "nested"
+		  ) => boolean);
 
 	/**
 	 * Group assets by how their are related to chunks.
@@ -10056,8 +10465,8 @@ declare interface StatsOptions {
 	warningsFilter?:
 		| string
 		| RegExp
-		| FilterItemTypes[]
-		| ((value: string) => boolean);
+		| WarningFilterItemTypes[]
+		| ((warning: StatsError, value: string) => boolean);
 }
 declare abstract class StatsPrinter {
 	hooks: Readonly<{
@@ -10074,6 +10483,7 @@ declare abstract class StatsPrinter {
 	print(type: string, object: Object, baseContext?: Object): string;
 }
 type StatsPrinterContext = KnownStatsPrinterContext & Record<string, any>;
+type StatsProfile = KnownStatsProfile & Record<string, any>;
 type StatsValue =
 	| boolean
 	| "none"
@@ -10117,7 +10527,9 @@ declare class Template {
 	): Source;
 	static renderRuntimeModules(
 		runtimeModules: RuntimeModule[],
-		renderContext: RenderContextModuleTemplate
+		renderContext: RenderContextModuleTemplate & {
+			codeGenerationResults?: CodeGenerationResults;
+		}
 	): Source;
 	static renderChunkRuntimeModules(
 		runtimeModules: RuntimeModule[],
@@ -10146,7 +10558,7 @@ declare interface UpdateHashContextGenerator {
 	chunkGraph: ChunkGraph;
 	runtime: RuntimeSpec;
 }
-type UsageStateType = 0 | 2 | 3 | 1 | 4;
+type UsageStateType = 0 | 1 | 2 | 3 | 4;
 declare interface UserResolveOptions {
 	/**
 	 * A list of module alias configurations or an object which maps key to value
@@ -10297,6 +10709,10 @@ declare interface VariableInfoInterface {
 	freeName: string | true;
 	tagInfo?: TagInfo;
 }
+type WarningFilterItemTypes =
+	| string
+	| RegExp
+	| ((warning: StatsError, value: string) => boolean);
 declare interface WatchFileSystem {
 	watch: (
 		files: Iterable<string>,
@@ -10371,6 +10787,16 @@ declare interface Watcher {
 	pause: () => void;
 
 	/**
+	 * get current aggregated changes that have not yet send to callback
+	 */
+	getAggregatedChanges?: () => Set<string>;
+
+	/**
+	 * get current aggregated removals that have not yet send to callback
+	 */
+	getAggregatedRemovals?: () => Set<string>;
+
+	/**
 	 * get info about files
 	 */
 	getFileTimeInfoEntries: () => Map<string, FileSystemInfoEntry | "ignore">;
@@ -10387,6 +10813,7 @@ declare abstract class Watching {
 	callbacks: CallbackFunction<void>[];
 	closed: boolean;
 	suspended: boolean;
+	blocked: boolean;
 	watchOptions: {
 		/**
 		 * Delay the rebuilt after the first change. Value is a time in ms.
@@ -10742,14 +11169,14 @@ declare function exports(
 	callback?: CallbackWebpack<Stats>
 ): Compiler;
 declare function exports(
-	options: Configuration[],
+	options: Configuration[] & MultiCompilerOptions,
 	callback?: CallbackWebpack<MultiStats>
 ): MultiCompiler;
 declare namespace exports {
 	export const webpack: {
 		(options: Configuration, callback?: CallbackWebpack<Stats>): Compiler;
 		(
-			options: Configuration[],
+			options: Configuration[] & MultiCompilerOptions,
 			callback?: CallbackWebpack<MultiStats>
 		): MultiCompiler;
 	};
@@ -10870,6 +11297,8 @@ declare namespace exports {
 		export let hasOwnProperty: string;
 		export let systemContext: string;
 		export let baseURI: string;
+		export let relativeUrl: string;
+		export let asyncModule: string;
 	}
 	export const UsageState: Readonly<{
 		Unused: 0;
@@ -11086,6 +11515,7 @@ declare namespace exports {
 		Cache,
 		Chunk,
 		ChunkGraph,
+		CleanPlugin,
 		Compilation,
 		Compiler,
 		ConcatenationScope,
@@ -11135,6 +11565,7 @@ declare namespace exports {
 		WebpackOptionsDefaulter,
 		Entry,
 		EntryNormalized,
+		EntryObject,
 		LibraryOptions,
 		ModuleOptions,
 		ResolveOptionsWebpackOptions as ResolveOptions,
@@ -11148,7 +11579,10 @@ declare namespace exports {
 		WebpackPluginInstance,
 		Asset,
 		AssetInfo,
-		ParserState
+		MultiStats,
+		ParserState,
+		Watching,
+		StatsCompilation
 	};
 }
 

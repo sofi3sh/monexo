@@ -5,6 +5,7 @@
 
 "use strict";
 
+const fs = require("fs");
 const path = require("path");
 const Template = require("../Template");
 const { cleverMerge } = require("../util/cleverMerge");
@@ -262,9 +263,20 @@ const applyCacheDefaults = (cache, { name, mode }) => {
 			F(cache, "name", () => name + "-" + mode);
 			D(cache, "version", "");
 			F(cache, "cacheDirectory", () => {
-				const pkgDir = require("pkg-dir");
 				const cwd = process.cwd();
-				const dir = pkgDir.sync(cwd);
+				let dir = cwd;
+				for (;;) {
+					try {
+						if (fs.statSync(path.join(dir, "package.json")).isFile()) break;
+						// eslint-disable-next-line no-empty
+					} catch (e) {}
+					const parent = path.dirname(dir);
+					if (dir === parent) {
+						dir = undefined;
+						break;
+					}
+					dir = parent;
+				}
 				if (!dir) {
 					return path.resolve(cwd, ".cache/webpack");
 				} else if (process.versions.pnp === "1") {
@@ -610,11 +622,19 @@ const applyOutputDefaults = (
 	});
 	F(output, "chunkLoading", () => {
 		if (tp) {
-			if (tp.document) return "jsonp";
-			if (tp.require) return "require";
-			if (tp.nodeBuiltins) return "async-node";
-			if (tp.importScripts) return "import-scripts";
-			if (tp.dynamicImport && output.module) return "import";
+			switch (output.chunkFormat) {
+				case "array-push":
+					if (tp.document) return "jsonp";
+					if (tp.importScripts) return "import-scripts";
+					break;
+				case "commonjs":
+					if (tp.require) return "require";
+					if (tp.nodeBuiltins) return "async-node";
+					break;
+				case "module":
+					if (tp.dynamicImport) return "import";
+					break;
+			}
 			if (
 				tp.require === null ||
 				tp.nodeBuiltins === null ||
@@ -628,10 +648,18 @@ const applyOutputDefaults = (
 	});
 	F(output, "workerChunkLoading", () => {
 		if (tp) {
-			if (tp.require) return "require";
-			if (tp.nodeBuiltins) return "async-node";
-			if (tp.importScriptsInWorker) return "import-scripts";
-			if (tp.dynamicImportInWorker && output.module) return "import";
+			switch (output.chunkFormat) {
+				case "array-push":
+					if (tp.importScriptsInWorker) return "import-scripts";
+					break;
+				case "commonjs":
+					if (tp.require) return "require";
+					if (tp.nodeBuiltins) return "async-node";
+					break;
+				case "module":
+					if (tp.dynamicImportInWorker) return "import";
+					break;
+			}
 			if (
 				tp.require === null ||
 				tp.nodeBuiltins === null ||
@@ -644,8 +672,8 @@ const applyOutputDefaults = (
 	});
 	F(output, "wasmLoading", () => {
 		if (tp) {
-			if (tp.nodeBuiltins) return "async-node";
 			if (tp.fetchWasm) return "fetch";
+			if (tp.nodeBuiltins) return "async-node";
 			if (tp.nodeBuiltins === null || tp.fetchWasm === null) {
 				return "universal";
 			}

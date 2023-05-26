@@ -259,7 +259,8 @@ class NormalModule extends Module {
 		this._lastSuccessfulBuildMeta = {};
 		this._forceBuild = true;
 		this._isEvaluatingSideEffects = false;
-		this._addedSideEffectsBailout = new WeakSet();
+		/** @type {WeakSet<ModuleGraph> | undefined} */
+		this._addedSideEffectsBailout = undefined;
 	}
 
 	/**
@@ -934,7 +935,11 @@ class NormalModule extends Module {
 			for (const dep of this.dependencies) {
 				const state = dep.getModuleEvaluationSideEffectsState(moduleGraph);
 				if (state === true) {
-					if (!this._addedSideEffectsBailout.has(moduleGraph)) {
+					if (
+						this._addedSideEffectsBailout === undefined
+							? ((this._addedSideEffectsBailout = new WeakSet()), true)
+							: !this._addedSideEffectsBailout.has(moduleGraph)
+					) {
 						this._addedSideEffectsBailout.add(moduleGraph);
 						moduleGraph
 							.getOptimizationBailout(this)
@@ -988,6 +993,13 @@ class NormalModule extends Module {
 			runtimeRequirements.add(RuntimeGlobals.thisAsExports);
 		}
 
+		/** @type {Map<string, any>} */
+		let data;
+		const getData = () => {
+			if (data === undefined) data = new Map();
+			return data;
+		};
+
 		const sources = new Map();
 		for (const type of this.generator.getTypes(this)) {
 			const source = this.error
@@ -1002,6 +1014,7 @@ class NormalModule extends Module {
 						runtimeRequirements,
 						runtime,
 						concatenationScope,
+						getData,
 						type
 				  });
 
@@ -1013,7 +1026,8 @@ class NormalModule extends Module {
 		/** @type {CodeGenerationResult} */
 		const resultEntry = {
 			sources,
-			runtimeRequirements
+			runtimeRequirements,
+			data
 		};
 		return resultEntry;
 	}
