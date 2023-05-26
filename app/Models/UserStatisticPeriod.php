@@ -52,11 +52,16 @@ class UserStatisticPeriod
      */
     public function getLinearProgram(): float
     {
-        // Заработок на рефералах
+        // закоментовую по тз
+        /*
         $cloneTransaction = clone $this->transaction;
         return $cloneTransaction
             ->where('transaction_type_id', TransactionsTypesConsts::PROFIT_FROM_PARTNER_PROGRAM)
             ->sum('amount_usd');
+        */
+
+        // Повернути 0, якщо ви хочете, щоб метод повертав 0
+        return 0.0;
     }
 
     /**

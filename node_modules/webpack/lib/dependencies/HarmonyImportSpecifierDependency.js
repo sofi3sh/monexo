@@ -6,7 +6,9 @@
 "use strict";
 
 const Dependency = require("../Dependency");
-const { isDependencyUsedByExports } = require("../optimize/InnerGraph");
+const {
+	getDependencyUsedByExportsCondition
+} = require("../optimize/InnerGraph");
 const makeSerializable = require("../util/makeSerializable");
 const propertyAccess = require("../util/propertyAccess");
 const HarmonyImportDependency = require("./HarmonyImportDependency");
@@ -66,7 +68,10 @@ class HarmonyImportSpecifierDependency extends HarmonyImportDependency {
 	 * @returns {string[]} the imported ids
 	 */
 	getIds(moduleGraph) {
-		return moduleGraph.getMeta(this)[idsSymbol] || this.ids;
+		const meta = moduleGraph.getMetaIfExisting(this);
+		if (meta === undefined) return this.ids;
+		const ids = meta[idsSymbol];
+		return ids !== undefined ? ids : this.ids;
 	}
 
 	/**
@@ -80,11 +85,14 @@ class HarmonyImportSpecifierDependency extends HarmonyImportDependency {
 
 	/**
 	 * @param {ModuleGraph} moduleGraph module graph
-	 * @returns {function(ModuleGraphConnection, RuntimeSpec): ConnectionState} function to determine if the connection is active
+	 * @returns {null | false | function(ModuleGraphConnection, RuntimeSpec): ConnectionState} function to determine if the connection is active
 	 */
 	getCondition(moduleGraph) {
-		return (connection, runtime) =>
-			isDependencyUsedByExports(this, this.usedByExports, moduleGraph, runtime);
+		return getDependencyUsedByExportsCondition(
+			this,
+			this.usedByExports,
+			moduleGraph
+		);
 	}
 
 	/**
@@ -103,7 +111,9 @@ class HarmonyImportSpecifierDependency extends HarmonyImportDependency {
 	 */
 	getReferencedExports(moduleGraph, runtime) {
 		let ids = this.getIds(moduleGraph);
-		if (ids.length > 0 && ids[0] === "default") {
+		if (ids.length === 0) return Dependency.EXPORTS_OBJECT_REFERENCED;
+		let namespaceObjectAsContext = this.namespaceObjectAsContext;
+		if (ids[0] === "default") {
 			const selfModule = moduleGraph.getParentModule(this);
 			const importedModule = moduleGraph.getModule(this);
 			switch (
@@ -116,13 +126,18 @@ class HarmonyImportSpecifierDependency extends HarmonyImportDependency {
 				case "default-with-named":
 					if (ids.length === 1) return Dependency.EXPORTS_OBJECT_REFERENCED;
 					ids = ids.slice(1);
+					namespaceObjectAsContext = true;
 					break;
 				case "dynamic":
 					return Dependency.EXPORTS_OBJECT_REFERENCED;
 			}
 		}
 
-		if (this.namespaceObjectAsContext) {
+		if (
+			this.call &&
+			!this.directImport &&
+			(namespaceObjectAsContext || ids.length > 1)
+		) {
 			if (ids.length === 1) return Dependency.EXPORTS_OBJECT_REFERENCED;
 			ids = ids.slice(0, -1);
 		}
@@ -179,25 +194,6 @@ class HarmonyImportSpecifierDependency extends HarmonyImportDependency {
 	 */
 	getNumberOfIdOccurrences() {
 		return 0;
-	}
-
-	/**
-	 * Update the hash
-	 * @param {Hash} hash hash to be updated
-	 * @param {UpdateHashContext} context context
-	 * @returns {void}
-	 */
-	updateHash(hash, context) {
-		const { chunkGraph, runtime } = context;
-		super.updateHash(hash, context);
-		const moduleGraph = chunkGraph.moduleGraph;
-		const importedModule = moduleGraph.getModule(this);
-		const ids = this.getIds(moduleGraph);
-		hash.update(ids.join());
-		if (importedModule) {
-			const exportsInfo = moduleGraph.getExportsInfo(importedModule);
-			hash.update(`${exportsInfo.getUsedName(ids, runtime)}`);
-		}
 	}
 
 	serialize(context) {
