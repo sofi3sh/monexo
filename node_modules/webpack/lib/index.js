@@ -10,6 +10,7 @@ const memoize = require("./util/memoize");
 
 /** @typedef {import("../declarations/WebpackOptions").Entry} Entry */
 /** @typedef {import("../declarations/WebpackOptions").EntryNormalized} EntryNormalized */
+/** @typedef {import("../declarations/WebpackOptions").EntryObject} EntryObject */
 /** @typedef {import("../declarations/WebpackOptions").LibraryOptions} LibraryOptions */
 /** @typedef {import("../declarations/WebpackOptions").ModuleOptions} ModuleOptions */
 /** @typedef {import("../declarations/WebpackOptions").ResolveOptions} ResolveOptions */
@@ -24,7 +25,10 @@ const memoize = require("./util/memoize");
 /** @typedef {import("../declarations/WebpackOptions").WebpackPluginInstance} WebpackPluginInstance */
 /** @typedef {import("./Compilation").Asset} Asset */
 /** @typedef {import("./Compilation").AssetInfo} AssetInfo */
+/** @typedef {import("./MultiStats")} MultiStats */
 /** @typedef {import("./Parser").ParserState} ParserState */
+/** @typedef {import("./Watching")} Watching */
+/** @typedef {import("./stats/DefaultStatsFactoryPlugin").StatsCompilation} StatsCompilation */
 
 /**
  * @template {Function} T
@@ -108,6 +112,9 @@ module.exports = mergeExports(fn, {
 	},
 	get ChunkGraph() {
 		return require("./ChunkGraph");
+	},
+	get CleanPlugin() {
+		return require("./CleanPlugin");
 	},
 	get Compilation() {
 		return require("./Compilation");
