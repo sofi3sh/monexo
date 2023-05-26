@@ -412,7 +412,7 @@
                                 </div>
                             </div>
                         </li>
-                        
+
                         <li class="nav-item dropdown ml-0">
                             <div class="header-lang">
                                 <div class="active white-active" data-lang="en" href="#">
@@ -562,7 +562,7 @@
                             <a class="nav-link p-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
                                 <div class="media align-items-center">
-                                    
+
                                     <div class="media-body  ml-2  d-none d-lg-block">
                                         <span class="mb-0 text-sm  font-weight-bold">{{ $user->name }}</span>
                                     </div>
