@@ -6,7 +6,9 @@
 "use strict";
 
 const RuntimeGlobals = require("../RuntimeGlobals");
-const { isDependencyUsedByExports } = require("../optimize/InnerGraph");
+const {
+	getDependencyUsedByExportsCondition
+} = require("../optimize/InnerGraph");
 const makeSerializable = require("../util/makeSerializable");
 const ModuleDependency = require("./ModuleDependency");
 
@@ -26,11 +28,13 @@ class URLDependency extends ModuleDependency {
 	 * @param {string} request request
 	 * @param {[number, number]} range range of the arguments of new URL( |> ... <| )
 	 * @param {[number, number]} outerRange range of the full |> new URL(...) <|
+	 * @param {boolean=} relative use relative urls instead of absolute with base uri
 	 */
-	constructor(request, range, outerRange) {
+	constructor(request, range, outerRange, relative) {
 		super(request);
 		this.range = range;
 		this.outerRange = outerRange;
+		this.relative = relative || false;
 		/** @type {Set<string> | boolean} */
 		this.usedByExports = undefined;
 	}
@@ -45,16 +49,20 @@ class URLDependency extends ModuleDependency {
 
 	/**
 	 * @param {ModuleGraph} moduleGraph module graph
-	 * @returns {function(ModuleGraphConnection, RuntimeSpec): ConnectionState} function to determine if the connection is active
+	 * @returns {null | false | function(ModuleGraphConnection, RuntimeSpec): ConnectionState} function to determine if the connection is active
 	 */
 	getCondition(moduleGraph) {
-		return (connection, runtime) =>
-			isDependencyUsedByExports(this, this.usedByExports, moduleGraph, runtime);
+		return getDependencyUsedByExportsCondition(
+			this,
+			this.usedByExports,
+			moduleGraph
+		);
 	}
 
 	serialize(context) {
 		const { write } = context;
 		write(this.outerRange);
+		write(this.relative);
 		write(this.usedByExports);
 		super.serialize(context);
 	}
@@ -62,6 +70,7 @@ class URLDependency extends ModuleDependency {
 	deserialize(context) {
 		const { read } = context;
 		this.outerRange = read();
+		this.relative = read();
 		this.usedByExports = read();
 		super.deserialize(context);
 	}
@@ -96,20 +105,38 @@ URLDependency.Template = class URLDependencyTemplate extends (
 			return;
 		}
 
-		runtimeRequirements.add(RuntimeGlobals.baseURI);
 		runtimeRequirements.add(RuntimeGlobals.require);
 
-		source.replace(
-			dep.range[0],
-			dep.range[1] - 1,
-			`/* asset import */ ${runtimeTemplate.moduleRaw({
-				chunkGraph,
-				module: moduleGraph.getModule(dep),
-				request: dep.request,
-				runtimeRequirements,
-				weak: false
-			})}, ${RuntimeGlobals.baseURI}`
-		);
+		if (dep.relative) {
+			runtimeRequirements.add(RuntimeGlobals.relativeUrl);
+			source.replace(
+				dep.outerRange[0],
+				dep.outerRange[1] - 1,
+				`/* asset import */ new ${
+					RuntimeGlobals.relativeUrl
+				}(${runtimeTemplate.moduleRaw({
+					chunkGraph,
+					module: moduleGraph.getModule(dep),
+					request: dep.request,
+					runtimeRequirements,
+					weak: false
+				})})`
+			);
+		} else {
+			runtimeRequirements.add(RuntimeGlobals.baseURI);
+
+			source.replace(
+				dep.range[0],
+				dep.range[1] - 1,
+				`/* asset import */ ${runtimeTemplate.moduleRaw({
+					chunkGraph,
+					module: moduleGraph.getModule(dep),
+					request: dep.request,
+					runtimeRequirements,
+					weak: false
+				})}, ${RuntimeGlobals.baseURI}`
+			);
+		}
 	}
 };
 

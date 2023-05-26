@@ -55,6 +55,7 @@ const StatsPrinter = require("./stats/StatsPrinter");
 const { equals: arrayEquals } = require("./util/ArrayHelpers");
 const AsyncQueue = require("./util/AsyncQueue");
 const LazySet = require("./util/LazySet");
+const { provide } = require("./util/MapHelpers");
 const { cachedCleverMerge } = require("./util/cleverMerge");
 const {
 	compareLocations,
@@ -98,6 +99,9 @@ const { isSourceEqual } = require("./util/source");
 /** @typedef {import("./RuntimeModule")} RuntimeModule */
 /** @typedef {import("./Template").RenderManifestEntry} RenderManifestEntry */
 /** @typedef {import("./Template").RenderManifestOptions} RenderManifestOptions */
+/** @typedef {import("./stats/DefaultStatsFactoryPlugin").StatsAsset} StatsAsset */
+/** @typedef {import("./stats/DefaultStatsFactoryPlugin").StatsError} StatsError */
+/** @typedef {import("./stats/DefaultStatsFactoryPlugin").StatsModule} StatsModule */
 /** @typedef {import("./util/Hash")} Hash */
 /** @template T @typedef {import("./util/deprecation").FakeHook<T>} FakeHook<T> */
 /** @typedef {import("./util/runtime").RuntimeSpec} RuntimeSpec */
@@ -234,9 +238,9 @@ const { isSourceEqual } = require("./util/source");
  * @property {boolean} groupAssetsByPath
  * @property {boolean} groupAssetsByExtension
  * @property {number} assetsSpace
- * @property {Function[]} excludeAssets
- * @property {Function[]} excludeModules
- * @property {Function[]} warningsFilter
+ * @property {((value: string, asset: StatsAsset) => boolean)[]} excludeAssets
+ * @property {((name: string, module: StatsModule, type: "module" | "chunk" | "root-of-chunk" | "nested") => boolean)[]} excludeModules
+ * @property {((warning: StatsError, textValue: string) => boolean)[]} warningsFilter
  * @property {boolean} cachedModules
  * @property {boolean} orphanModules
  * @property {boolean} dependentModules
@@ -256,12 +260,12 @@ const { isSourceEqual } = require("./util/source");
  * @property {number} chunkModulesSpace
  * @property {number} nestedModulesSpace
  * @property {false|"none"|"error"|"warn"|"info"|"log"|"verbose"} logging
- * @property {Function[]} loggingDebug
+ * @property {((value: string) => boolean)[]} loggingDebug
  * @property {boolean} loggingTrace
  * @property {any} _env
  */
 
-/** @typedef {KnownNormalizedStatsOptions & StatsOptions & Record<string, any>} NormalizedStatsOptions */
+/** @typedef {KnownNormalizedStatsOptions & Omit<StatsOptions, keyof KnownNormalizedStatsOptions> & Record<string, any>} NormalizedStatsOptions */
 
 /**
  * @typedef {Object} KnownCreateStatsOptionsContext
@@ -487,7 +491,7 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
 						);
 					}
 				},
-				`${name} is deprecated (use Compilation.hook.processAssets instead and use one of Compilation.PROCESS_ASSETS_STAGE_* as stage option)`,
+				`${name} is deprecated (use Compilation.hooks.processAssets instead and use one of Compilation.PROCESS_ASSETS_STAGE_* as stage option)`,
 				code
 			);
 		};
@@ -817,23 +821,29 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
 		/** @type {CodeGenerationResults} */
 		this.codeGenerationResults = undefined;
 
-		/** @type {AsyncQueue<FactorizeModuleOptions, string, Module>} */
-		this.factorizeQueue = new AsyncQueue({
-			name: "factorize",
+		/** @type {AsyncQueue<Module, Module, Module>} */
+		this.processDependenciesQueue = new AsyncQueue({
+			name: "processDependencies",
 			parallelism: options.parallelism || 100,
-			processor: this._factorizeModule.bind(this)
+			processor: this._processModuleDependencies.bind(this)
 		});
 		/** @type {AsyncQueue<Module, string, Module>} */
 		this.addModuleQueue = new AsyncQueue({
 			name: "addModule",
-			parallelism: options.parallelism || 100,
+			parent: this.processDependenciesQueue,
 			getKey: module => module.identifier(),
 			processor: this._addModule.bind(this)
+		});
+		/** @type {AsyncQueue<FactorizeModuleOptions, string, Module>} */
+		this.factorizeQueue = new AsyncQueue({
+			name: "factorize",
+			parent: this.addModuleQueue,
+			processor: this._factorizeModule.bind(this)
 		});
 		/** @type {AsyncQueue<Module, Module, Module>} */
 		this.buildQueue = new AsyncQueue({
 			name: "build",
-			parallelism: options.parallelism || 100,
+			parent: this.factorizeQueue,
 			processor: this._buildModule.bind(this)
 		});
 		/** @type {AsyncQueue<Module, Module, Module>} */
@@ -841,12 +851,6 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
 			name: "rebuild",
 			parallelism: options.parallelism || 100,
 			processor: this._rebuildModule.bind(this)
-		});
-		/** @type {AsyncQueue<Module, Module, Module>} */
-		this.processDependenciesQueue = new AsyncQueue({
-			name: "processDependencies",
-			parallelism: options.parallelism || 100,
-			processor: this._processModuleDependencies.bind(this)
 		});
 
 		/**
@@ -1484,7 +1488,11 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
 
 					for (let i = 0; i < dependencies.length; i++) {
 						const dependency = dependencies[i];
-						moduleGraph.setResolvedModule(originModule, dependency, module);
+						moduleGraph.setResolvedModule(
+							recursive ? originModule : null,
+							dependency,
+							module
+						);
 					}
 
 					moduleGraph.setIssuerIfUnset(
@@ -1871,6 +1879,7 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
 				});
 			}
 
+			this.processDependenciesQueue.invalidate(module);
 			this.processModuleDependencies(module, err => {
 				if (err) return callback(err);
 				this.removeReasonsOfDependencyBlock(module, {
@@ -1891,6 +1900,184 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
 	}
 
 	finish(callback) {
+		if (this.profile) {
+			this.logger.time("finish module profiles");
+			const ParallelismFactorCalculator = require("./util/ParallelismFactorCalculator");
+			const p = new ParallelismFactorCalculator();
+			const moduleGraph = this.moduleGraph;
+			const modulesWithProfiles = new Map();
+			for (const module of this.modules) {
+				const profile = moduleGraph.getProfile(module);
+				if (!profile) continue;
+				modulesWithProfiles.set(module, profile);
+				p.range(
+					profile.buildingStartTime,
+					profile.buildingEndTime,
+					f => (profile.buildingParallelismFactor = f)
+				);
+				p.range(
+					profile.factoryStartTime,
+					profile.factoryEndTime,
+					f => (profile.factoryParallelismFactor = f)
+				);
+				p.range(
+					profile.integrationStartTime,
+					profile.integrationEndTime,
+					f => (profile.integrationParallelismFactor = f)
+				);
+				p.range(
+					profile.storingStartTime,
+					profile.storingEndTime,
+					f => (profile.storingParallelismFactor = f)
+				);
+				p.range(
+					profile.restoringStartTime,
+					profile.restoringEndTime,
+					f => (profile.restoringParallelismFactor = f)
+				);
+				if (profile.additionalFactoryTimes) {
+					for (const { start, end } of profile.additionalFactoryTimes) {
+						const influence = (end - start) / profile.additionalFactories;
+						p.range(
+							start,
+							end,
+							f =>
+								(profile.additionalFactoriesParallelismFactor += f * influence)
+						);
+					}
+				}
+			}
+			p.calculate();
+
+			const logger = this.getLogger("webpack.Compilation.ModuleProfile");
+			const logByValue = (value, msg) => {
+				if (value > 1000) {
+					logger.error(msg);
+				} else if (value > 500) {
+					logger.warn(msg);
+				} else if (value > 200) {
+					logger.info(msg);
+				} else if (value > 30) {
+					logger.log(msg);
+				} else {
+					logger.debug(msg);
+				}
+			};
+			const logNormalSummary = (category, getDuration, getParallelism) => {
+				let sum = 0;
+				let max = 0;
+				for (const [module, profile] of modulesWithProfiles) {
+					const p = getParallelism(profile);
+					const d = getDuration(profile);
+					if (d === 0 || p === 0) continue;
+					const t = d / p;
+					sum += t;
+					if (t <= 10) continue;
+					logByValue(
+						t,
+						` | ${Math.round(t)} ms${
+							p >= 1.1 ? ` (parallelism ${Math.round(p * 10) / 10})` : ""
+						} ${category} > ${module.readableIdentifier(this.requestShortener)}`
+					);
+					max = Math.max(max, t);
+				}
+				if (sum <= 10) return;
+				logByValue(
+					Math.max(sum / 10, max),
+					`${Math.round(sum)} ms ${category}`
+				);
+			};
+			const logByLoadersSummary = (category, getDuration, getParallelism) => {
+				const map = new Map();
+				for (const [module, profile] of modulesWithProfiles) {
+					const list = provide(
+						map,
+						module.type + "!" + module.identifier().replace(/(!|^)[^!]*$/, ""),
+						() => []
+					);
+					list.push({ module, profile });
+				}
+
+				let sum = 0;
+				let max = 0;
+				for (const [key, modules] of map) {
+					let innerSum = 0;
+					let innerMax = 0;
+					for (const { module, profile } of modules) {
+						const p = getParallelism(profile);
+						const d = getDuration(profile);
+						if (d === 0 || p === 0) continue;
+						const t = d / p;
+						innerSum += t;
+						if (t <= 10) continue;
+						logByValue(
+							t,
+							` |  | ${Math.round(t)} ms${
+								p >= 1.1 ? ` (parallelism ${Math.round(p * 10) / 10})` : ""
+							} ${category} > ${module.readableIdentifier(
+								this.requestShortener
+							)}`
+						);
+						innerMax = Math.max(innerMax, t);
+					}
+					sum += innerSum;
+					if (innerSum <= 10) continue;
+					const idx = key.indexOf("!");
+					const loaders = key.slice(idx + 1);
+					const moduleType = key.slice(0, idx);
+					const t = Math.max(innerSum / 10, innerMax);
+					logByValue(
+						t,
+						` | ${Math.round(innerSum)} ms ${category} > ${
+							loaders
+								? `${
+										modules.length
+								  } x ${moduleType} with ${this.requestShortener.shorten(
+										loaders
+								  )}`
+								: `${modules.length} x ${moduleType}`
+						}`
+					);
+					max = Math.max(max, t);
+				}
+				if (sum <= 10) return;
+				logByValue(
+					Math.max(sum / 10, max),
+					`${Math.round(sum)} ms ${category}`
+				);
+			};
+			logNormalSummary(
+				"resolve to new modules",
+				p => p.factory,
+				p => p.factoryParallelismFactor
+			);
+			logNormalSummary(
+				"resolve to existing modules",
+				p => p.additionalFactories,
+				p => p.additionalFactoriesParallelismFactor
+			);
+			logNormalSummary(
+				"integrate modules",
+				p => p.restoring,
+				p => p.restoringParallelismFactor
+			);
+			logByLoadersSummary(
+				"build modules",
+				p => p.building,
+				p => p.buildingParallelismFactor
+			);
+			logNormalSummary(
+				"store modules",
+				p => p.storing,
+				p => p.storingParallelismFactor
+			);
+			logNormalSummary(
+				"restore modules",
+				p => p.restoring,
+				p => p.restoringParallelismFactor
+			);
+			this.logger.timeEnd("finish module profiles");
+		}
 		this.logger.time("finish modules");
 		const { modules } = this;
 		this.hooks.finishModules.callAsync(modules, err => {
@@ -2005,14 +2192,13 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
 				...mapAndSort(includeDependencies)
 			];
 
+			let modulesList = chunkGraphInit.get(entrypoint);
+			if (modulesList === undefined) {
+				chunkGraphInit.set(entrypoint, (modulesList = []));
+			}
 			for (const module of includedModules) {
 				this.assignDepth(module);
-				const modulesList = chunkGraphInit.get(entrypoint);
-				if (modulesList === undefined) {
-					chunkGraphInit.set(entrypoint, [module]);
-				} else {
-					modulesList.push(module);
-				}
+				modulesList.push(module);
 			}
 		}
 		const runtimeChunks = new Set();
@@ -2173,77 +2359,83 @@ Or do you want to use the entrypoints '${name}' and '${runtime}' independently o
 
 						this.logger.time("hashing");
 						this.hooks.beforeHash.call();
-						this.createHash();
+						const codeGenerationJobs = this.createHash();
 						this.hooks.afterHash.call();
 						this.logger.timeEnd("hashing");
 
-						if (shouldRecord) {
-							this.logger.time("record hash");
-							this.hooks.recordHash.call(this.records);
-							this.logger.timeEnd("record hash");
-						}
+						this._runCodeGenerationJobs(codeGenerationJobs, err => {
+							if (err) {
+								return callback(err);
+							}
 
-						this.logger.time("module assets");
-						this.clearAssets();
+							if (shouldRecord) {
+								this.logger.time("record hash");
+								this.hooks.recordHash.call(this.records);
+								this.logger.timeEnd("record hash");
+							}
 
-						this.hooks.beforeModuleAssets.call();
-						this.createModuleAssets();
-						this.logger.timeEnd("module assets");
+							this.logger.time("module assets");
+							this.clearAssets();
 
-						const cont = () => {
-							this.logger.time("process assets");
-							this.hooks.processAssets.callAsync(this.assets, err => {
-								if (err) {
-									return callback(
-										makeWebpackError(err, "Compilation.hooks.processAssets")
-									);
-								}
-								this.hooks.afterProcessAssets.call(this.assets);
-								this.logger.timeEnd("process assets");
-								this.assets = soonFrozenObjectDeprecation(
-									this.assets,
-									"Compilation.assets",
-									"DEP_WEBPACK_COMPILATION_ASSETS",
-									`BREAKING CHANGE: No more changes should happen to Compilation.assets after sealing the Compilation.
-	Do changes to assets earlier, e. g. in Compilation.hooks.processAssets.
-	Make sure to select an appropriate stage from Compilation.PROCESS_ASSETS_STAGE_*.`
-								);
+							this.hooks.beforeModuleAssets.call();
+							this.createModuleAssets();
+							this.logger.timeEnd("module assets");
 
-								this.summarizeDependencies();
-								if (shouldRecord) {
-									this.hooks.record.call(this, this.records);
-								}
-
-								if (this.hooks.needAdditionalSeal.call()) {
-									this.unseal();
-									return this.seal(callback);
-								}
-								return this.hooks.afterSeal.callAsync(err => {
+							const cont = () => {
+								this.logger.time("process assets");
+								this.hooks.processAssets.callAsync(this.assets, err => {
 									if (err) {
 										return callback(
-											makeWebpackError(err, "Compilation.hooks.afterSeal")
+											makeWebpackError(err, "Compilation.hooks.processAssets")
 										);
 									}
-									this.fileSystemInfo.logStatistics();
-									callback();
-								});
-							});
-						};
+									this.hooks.afterProcessAssets.call(this.assets);
+									this.logger.timeEnd("process assets");
+									this.assets = soonFrozenObjectDeprecation(
+										this.assets,
+										"Compilation.assets",
+										"DEP_WEBPACK_COMPILATION_ASSETS",
+										`BREAKING CHANGE: No more changes should happen to Compilation.assets after sealing the Compilation.
+	Do changes to assets earlier, e. g. in Compilation.hooks.processAssets.
+	Make sure to select an appropriate stage from Compilation.PROCESS_ASSETS_STAGE_*.`
+									);
 
-						this.logger.time("create chunk assets");
-						if (this.hooks.shouldGenerateChunkAssets.call() !== false) {
-							this.hooks.beforeChunkAssets.call();
-							this.createChunkAssets(err => {
+									this.summarizeDependencies();
+									if (shouldRecord) {
+										this.hooks.record.call(this, this.records);
+									}
+
+									if (this.hooks.needAdditionalSeal.call()) {
+										this.unseal();
+										return this.seal(callback);
+									}
+									return this.hooks.afterSeal.callAsync(err => {
+										if (err) {
+											return callback(
+												makeWebpackError(err, "Compilation.hooks.afterSeal")
+											);
+										}
+										this.fileSystemInfo.logStatistics();
+										callback();
+									});
+								});
+							};
+
+							this.logger.time("create chunk assets");
+							if (this.hooks.shouldGenerateChunkAssets.call() !== false) {
+								this.hooks.beforeChunkAssets.call();
+								this.createChunkAssets(err => {
+									this.logger.timeEnd("create chunk assets");
+									if (err) {
+										return callback(err);
+									}
+									cont();
+								});
+							} else {
 								this.logger.timeEnd("create chunk assets");
-								if (err) {
-									return callback(err);
-								}
 								cont();
-							});
-						} else {
-							this.logger.timeEnd("create chunk assets");
-							cont();
-						}
+							}
+						});
 					});
 				}
 			);
@@ -2288,16 +2480,8 @@ Or do you want to use the entrypoints '${name}' and '${runtime}' independently o
 	}
 
 	codeGeneration(callback) {
-		let statModulesFromCache = 0;
-		let statModulesGenerated = 0;
-		const {
-			chunkGraph,
-			moduleGraph,
-			dependencyTemplates,
-			runtimeTemplate
-		} = this;
-		const results = (this.codeGenerationResults = new CodeGenerationResults());
-		const errors = [];
+		const { chunkGraph } = this;
+		this.codeGenerationResults = new CodeGenerationResults();
 		/** @type {{module: Module, hash: string, runtime: RuntimeSpec, runtimes: RuntimeSpec[]}[]} */
 		const jobs = [];
 		for (const module of this.modules) {
@@ -2324,52 +2508,41 @@ Or do you want to use the entrypoints '${name}' and '${runtime}' independently o
 			}
 		}
 
+		this._runCodeGenerationJobs(jobs, callback);
+	}
+
+	_runCodeGenerationJobs(jobs, callback) {
+		let statModulesFromCache = 0;
+		let statModulesGenerated = 0;
+		const {
+			chunkGraph,
+			moduleGraph,
+			dependencyTemplates,
+			runtimeTemplate
+		} = this;
+		const results = this.codeGenerationResults;
+		const errors = [];
 		asyncLib.eachLimit(
 			jobs,
 			this.options.parallelism,
 			({ module, hash, runtime, runtimes }, callback) => {
-				const cache = new MultiItemCache(
-					runtimes.map(runtime =>
-						this._codeGenerationCache.getItemCache(
-							`${module.identifier()}|${getRuntimeKey(runtime)}`,
-							`${hash}|${dependencyTemplates.getHash()}`
-						)
-					)
+				this._codeGenerationModule(
+					module,
+					runtime,
+					runtimes,
+					hash,
+					dependencyTemplates,
+					chunkGraph,
+					moduleGraph,
+					runtimeTemplate,
+					errors,
+					results,
+					(err, codeGenerated) => {
+						if (codeGenerated) statModulesGenerated++;
+						else statModulesFromCache++;
+						callback(err);
+					}
 				);
-				cache.get((err, cachedResult) => {
-					if (err) return callback(err);
-					let result;
-					if (!cachedResult) {
-						statModulesGenerated++;
-						try {
-							this.codeGeneratedModules.add(module);
-							result = module.codeGeneration({
-								chunkGraph,
-								moduleGraph,
-								dependencyTemplates,
-								runtimeTemplate,
-								runtime
-							});
-						} catch (err) {
-							errors.push(new CodeGenerationError(module, err));
-							result = cachedResult = {
-								sources: new Map(),
-								runtimeRequirements: null
-							};
-						}
-					} else {
-						statModulesFromCache++;
-						result = cachedResult;
-					}
-					for (const runtime of runtimes) {
-						results.add(module, runtime, result);
-					}
-					if (!cachedResult) {
-						cache.store(result, callback);
-					} else {
-						callback();
-					}
-				});
 			},
 			err => {
 				if (err) return callback(err);
@@ -2390,6 +2563,76 @@ Or do you want to use the entrypoints '${name}' and '${runtime}' independently o
 				callback();
 			}
 		);
+	}
+
+	/**
+	 * @param {Module} module module
+	 * @param {RuntimeSpec} runtime runtime
+	 * @param {RuntimeSpec[]} runtimes runtimes
+	 * @param {string} hash hash
+	 * @param {DependencyTemplates} dependencyTemplates dependencyTemplates
+	 * @param {ChunkGraph} chunkGraph chunkGraph
+	 * @param {ModuleGraph} moduleGraph moduleGraph
+	 * @param {RuntimeTemplate} runtimeTemplate runtimeTemplate
+	 * @param {WebpackError[]} errors errors
+	 * @param {CodeGenerationResults} results results
+	 * @param {function(WebpackError=, boolean=): void} callback callback
+	 */
+	_codeGenerationModule(
+		module,
+		runtime,
+		runtimes,
+		hash,
+		dependencyTemplates,
+		chunkGraph,
+		moduleGraph,
+		runtimeTemplate,
+		errors,
+		results,
+		callback
+	) {
+		let codeGenerated = false;
+		const cache = new MultiItemCache(
+			runtimes.map(runtime =>
+				this._codeGenerationCache.getItemCache(
+					`${module.identifier()}|${getRuntimeKey(runtime)}`,
+					`${hash}|${dependencyTemplates.getHash()}`
+				)
+			)
+		);
+		cache.get((err, cachedResult) => {
+			if (err) return callback(err);
+			let result;
+			if (!cachedResult) {
+				try {
+					codeGenerated = true;
+					this.codeGeneratedModules.add(module);
+					result = module.codeGeneration({
+						chunkGraph,
+						moduleGraph,
+						dependencyTemplates,
+						runtimeTemplate,
+						runtime
+					});
+				} catch (err) {
+					errors.push(new CodeGenerationError(module, err));
+					result = cachedResult = {
+						sources: new Map(),
+						runtimeRequirements: null
+					};
+				}
+			} else {
+				result = cachedResult;
+			}
+			for (const runtime of runtimes) {
+				results.add(module, runtime, result);
+			}
+			if (!cachedResult) {
+				cache.store(result, err => callback(err, codeGenerated));
+			} else {
+				callback(null, codeGenerated);
+			}
+		});
 	}
 
 	/**
@@ -2818,20 +3061,14 @@ Or do you want to use the entrypoints '${name}' and '${runtime}' independently o
 		for (const module of this.modules) {
 			for (const runtime of chunkGraph.getModuleRuntimes(module)) {
 				statModulesHashed++;
-				const moduleHash = createHash(hashFunction);
-				module.updateHash(moduleHash, {
+				this._createModuleHash(
+					module,
 					chunkGraph,
 					runtime,
-					runtimeTemplate
-				});
-				const moduleHashDigest = /** @type {string} */ (moduleHash.digest(
-					hashDigest
-				));
-				chunkGraph.setModuleHashes(
-					module,
-					runtime,
-					moduleHashDigest,
-					moduleHashDigest.substr(0, hashDigestLength)
+					hashFunction,
+					runtimeTemplate,
+					hashDigest,
+					hashDigestLength
 				);
 			}
 		}
@@ -2840,6 +3077,33 @@ Or do you want to use the entrypoints '${name}' and '${runtime}' independently o
 				Math.round((100 * statModulesHashed) / this.modules.size) / 100
 			} variants per module in average)`
 		);
+	}
+
+	_createModuleHash(
+		module,
+		chunkGraph,
+		runtime,
+		hashFunction,
+		runtimeTemplate,
+		hashDigest,
+		hashDigestLength
+	) {
+		const moduleHash = createHash(hashFunction);
+		module.updateHash(moduleHash, {
+			chunkGraph,
+			runtime,
+			runtimeTemplate
+		});
+		const moduleHashDigest = /** @type {string} */ (moduleHash.digest(
+			hashDigest
+		));
+		chunkGraph.setModuleHashes(
+			module,
+			runtime,
+			moduleHashDigest,
+			moduleHashDigest.substr(0, hashDigestLength)
+		);
+		return moduleHashDigest;
 	}
 
 	createHash() {
@@ -2878,75 +3142,145 @@ Or do you want to use the entrypoints '${name}' and '${runtime}' independently o
 		}
 
 		this.logger.time("hashing: sort chunks");
-		// clone needed as sort below is in place mutation
-		const chunks = Array.from(this.chunks);
-		/**
-		 * sort here will bring all "falsy" values to the beginning
-		 * this is needed as the "hasRuntime()" chunks are dependent on the
-		 * hashes of the non-runtime chunks.
+		/*
+		 * all non-runtime chunks need to be hashes first,
+		 * since runtime chunk might use their hashes.
+		 * runtime chunks need to be hashed in the correct order
+		 * since they may depend on each other (for async entrypoints).
+		 * So we put all non-runtime chunks first and hash them in any order.
+		 * And order runtime chunks according to referenced between each other.
+		 * Chunks need to be in deterministic order since we add hashes to full chunk
+		 * during these hashing.
 		 */
-		const runtimeChunks = [];
+		/** @type {Chunk[]} */
+		const unorderedRuntimeChunks = [];
+		/** @type {Chunk[]} */
 		const otherChunks = [];
-		for (const c of chunks) {
+		for (const c of this.chunks) {
 			if (c.hasRuntime()) {
-				runtimeChunks.push({
-					chunk: c,
-					referencedChunks: new Set(
-						Array.from(c.getAllReferencedAsyncEntrypoints()).map(
-							e => e.chunks[e.chunks.length - 1]
-						)
-					)
-				});
+				unorderedRuntimeChunks.push(c);
 			} else {
 				otherChunks.push(c);
 			}
 		}
+		unorderedRuntimeChunks.sort(byId);
 		otherChunks.sort(byId);
-		runtimeChunks.sort((a, b) => {
-			const aDependOnB = a.referencedChunks.has(b.chunk);
-			const bDependOnA = b.referencedChunks.has(a.chunk);
-			if (aDependOnB && bDependOnA) {
-				const err = new WebpackError(
-					`Circular dependency between chunks with runtime (${
-						a.chunk.name || a.chunk.id
-					} and ${b.chunk.name || b.chunk.id}).
-This prevents using hashes of each other and should be avoided.`
-				);
-				err.chunk = a.chunk;
-				this.warnings.push(err);
-				return byId(a.chunk, b.chunk);
+
+		/** @typedef {{ chunk: Chunk, referencedBy: RuntimeChunkInfo[], remaining: number }} RuntimeChunkInfo */
+		/** @type {Map<Chunk, RuntimeChunkInfo>} */
+		const runtimeChunksMap = new Map();
+		for (const chunk of unorderedRuntimeChunks) {
+			runtimeChunksMap.set(chunk, {
+				chunk,
+				referencedBy: [],
+				remaining: 0
+			});
+		}
+		let remaining = 0;
+		for (const info of runtimeChunksMap.values()) {
+			for (const other of new Set(
+				Array.from(info.chunk.getAllReferencedAsyncEntrypoints()).map(
+					e => e.chunks[e.chunks.length - 1]
+				)
+			)) {
+				const otherInfo = runtimeChunksMap.get(other);
+				otherInfo.referencedBy.push(info);
+				info.remaining++;
+				remaining++;
 			}
-			if (aDependOnB) return 1;
-			if (bDependOnA) return -1;
-			return byId(a.chunk, b.chunk);
-		});
+		}
+		/** @type {Chunk[]} */
+		const runtimeChunks = [];
+		for (const info of runtimeChunksMap.values()) {
+			if (info.remaining === 0) {
+				runtimeChunks.push(info.chunk);
+			}
+		}
+		// If there are any references between chunks
+		// make sure to follow these chains
+		if (remaining > 0) {
+			const readyChunks = [];
+			for (const chunk of runtimeChunks) {
+				const info = runtimeChunksMap.get(chunk);
+				for (const otherInfo of info.referencedBy) {
+					remaining--;
+					if (--otherInfo.remaining === 0) {
+						readyChunks.push(otherInfo.chunk);
+					}
+				}
+				if (readyChunks.length > 0) {
+					// This ensures deterministic ordering, since referencedBy is non-deterministic
+					readyChunks.sort(byId);
+					for (const c of readyChunks) runtimeChunks.push(c);
+					readyChunks.length = 0;
+				}
+			}
+		}
+		// If there are still remaining references we have cycles and want to create a warning
+		if (remaining > 0) {
+			let circularRuntimeChunkInfo = [];
+			for (const info of runtimeChunksMap.values()) {
+				if (info.remaining !== 0) {
+					circularRuntimeChunkInfo.push(info);
+				}
+			}
+			circularRuntimeChunkInfo.sort(compareSelect(i => i.chunk, byId));
+			const err = new WebpackError(`Circular dependency between chunks with runtime (${Array.from(
+				circularRuntimeChunkInfo,
+				c => c.chunk.name || c.chunk.id
+			).join(", ")})
+This prevents using hashes of each other and should be avoided.`);
+			err.chunk = circularRuntimeChunkInfo[0].chunk;
+			this.warnings.push(err);
+			for (const i of circularRuntimeChunkInfo) runtimeChunks.push(i.chunk);
+		}
 		this.logger.timeEnd("hashing: sort chunks");
+
 		const fullHashChunks = new Set();
+		/** @type {{module: Module, hash: string, runtime: RuntimeSpec, runtimes: RuntimeSpec[]}[]} */
+		const codeGenerationJobs = [];
+		/** @type {Map<string, Map<Module, {module: Module, hash: string, runtime: RuntimeSpec, runtimes: RuntimeSpec[]}>>} */
+		const codeGenerationJobsMap = new Map();
+
 		const processChunk = chunk => {
 			// Last minute module hash generation for modules that depend on chunk hashes
 			this.logger.time("hashing: hash runtime modules");
+			const runtime = chunk.runtime;
 			for (const module of chunkGraph.getChunkModulesIterable(chunk)) {
-				if (!chunkGraph.hasModuleHashes(module, chunk.runtime)) {
-					const moduleHash = createHash(hashFunction);
-					module.updateHash(moduleHash, {
-						chunkGraph,
-						runtime: chunk.runtime,
-						runtimeTemplate
-					});
-					const moduleHashDigest = /** @type {string} */ (moduleHash.digest(
-						hashDigest
-					));
-					chunkGraph.setModuleHashes(
+				if (!chunkGraph.hasModuleHashes(module, runtime)) {
+					const hash = this._createModuleHash(
 						module,
-						chunk.runtime,
-						moduleHashDigest,
-						moduleHashDigest.substr(0, hashDigestLength)
+						chunkGraph,
+						runtime,
+						hashFunction,
+						runtimeTemplate,
+						hashDigest,
+						hashDigestLength
 					);
+					let hashMap = codeGenerationJobsMap.get(hash);
+					if (hashMap) {
+						const moduleJob = hashMap.get(module);
+						if (moduleJob) {
+							moduleJob.runtimes.push(runtime);
+							continue;
+						}
+					} else {
+						hashMap = new Map();
+						codeGenerationJobsMap.set(hash, hashMap);
+					}
+					const job = {
+						module,
+						hash,
+						runtime,
+						runtimes: [runtime]
+					};
+					hashMap.set(module, job);
+					codeGenerationJobs.push(job);
 				}
 			}
 			this.logger.timeAggregate("hashing: hash runtime modules");
-			const chunkHash = createHash(hashFunction);
 			this.logger.time("hashing: hash chunks");
+			const chunkHash = createHash(hashFunction);
 			try {
 				if (outputOptions.hashSalt) {
 					chunkHash.update(outputOptions.hashSalt);
@@ -2977,7 +3311,7 @@ This prevents using hashes of each other and should be avoided.`
 			this.logger.timeAggregate("hashing: hash chunks");
 		};
 		otherChunks.forEach(processChunk);
-		for (const { chunk } of runtimeChunks) processChunk(chunk);
+		for (const chunk of runtimeChunks) processChunk(chunk);
 
 		this.logger.timeAggregateEnd("hashing: hash runtime modules");
 		this.logger.timeAggregateEnd("hashing: hash chunks");
@@ -2999,12 +3333,14 @@ This prevents using hashes of each other and should be avoided.`
 				const moduleHashDigest = /** @type {string} */ (moduleHash.digest(
 					hashDigest
 				));
+				const oldHash = chunkGraph.getModuleHash(module, chunk.runtime);
 				chunkGraph.setModuleHashes(
 					module,
 					chunk.runtime,
 					moduleHashDigest,
 					moduleHashDigest.substr(0, hashDigestLength)
 				);
+				codeGenerationJobsMap.get(oldHash).get(module).hash = moduleHashDigest;
 			}
 			const chunkHash = createHash(hashFunction);
 			chunkHash.update(chunk.hash);
@@ -3017,6 +3353,7 @@ This prevents using hashes of each other and should be avoided.`
 			this.hooks.contentHash.call(chunk);
 		}
 		this.logger.timeEnd("hashing: process full hash modules");
+		return codeGenerationJobs;
 	}
 
 	/**
