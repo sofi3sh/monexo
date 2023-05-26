@@ -1,3 +1,4 @@
+/node_modules
 /public/landing/video/*.mp4
 /public/images/*.mp4
 /public/frontend/video
@@ -10,3 +11,5 @@
 /vendor
 /composer.lock
 /work
+package-lock.json
+yarn.lock
