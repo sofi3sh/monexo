@@ -13,6 +13,51 @@
         }
       ]
     },
+    "AssetFilterItemTypes": {
+      "description": "Filtering value, regexp or function.",
+      "cli": {
+        "helper": true
+      },
+      "anyOf": [
+        {
+          "instanceof": "RegExp",
+          "tsType": "RegExp"
+        },
+        {
+          "type": "string",
+          "absolutePath": false
+        },
+        {
+          "instanceof": "Function",
+          "tsType": "((name: string, asset: import('../lib/stats/DefaultStatsFactoryPlugin').StatsAsset) => boolean)"
+        }
+      ]
+    },
+    "AssetFilterTypes": {
+      "description": "Filtering modules.",
+      "cli": {
+        "helper": true
+      },
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "description": "Rule to filter.",
+            "cli": {
+              "helper": true
+            },
+            "oneOf": [
+              {
+                "$ref": "#/definitions/AssetFilterItemTypes"
+              }
+            ]
+          }
+        },
+        {
+          "$ref": "#/definitions/AssetFilterItemTypes"
+        }
+      ]
+    },
     "AssetGeneratorDataUrl": {
       "description": "The options for data url generator.",
       "anyOf": [
@@ -223,6 +268,45 @@
           "type": "string"
         }
       ]
+    },
+    "Clean": {
+      "description": "Clean the output directory before emit.",
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/definitions/CleanOptions"
+        }
+      ]
+    },
+    "CleanOptions": {
+      "description": "Advanced options for cleaning assets.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dry": {
+          "description": "Log the assets that should be removed instead of deleting them.",
+          "type": "boolean"
+        },
+        "keep": {
+          "description": "Keep these assets.",
+          "anyOf": [
+            {
+              "instanceof": "RegExp",
+              "tsType": "RegExp"
+            },
+            {
+              "type": "string",
+              "absolutePath": false
+            },
+            {
+              "instanceof": "Function",
+              "tsType": "((filename: string) => boolean)"
+            }
+          ]
+        }
+      }
     },
     "CompareBeforeEmit": {
       "description": "Check if to be emitted file already exists and have the same content before writing to output filesystem.",
@@ -603,6 +687,26 @@
                 "entries": {
                   "description": "Enable/disable lazy compilation for entries.",
                   "type": "boolean"
+                },
+                "imports": {
+                  "description": "Enable/disable lazy compilation for import() modules.",
+                  "type": "boolean"
+                },
+                "test": {
+                  "description": "Specify which entrypoints or import()ed modules should be lazily compiled. This is matched with the imported module and not the entrypoint name.",
+                  "anyOf": [
+                    {
+                      "instanceof": "RegExp",
+                      "tsType": "RegExp"
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "instanceof": "Function",
+                      "tsType": "((module: import('../lib/Module')) => boolean)"
+                    }
+                  ]
                 }
               }
             }
@@ -1210,7 +1314,14 @@
         },
         "url": {
           "description": "Enable/disable parsing of new URL() syntax.",
-          "type": "boolean"
+          "anyOf": [
+            {
+              "enum": ["relative"]
+            },
+            {
+              "type": "boolean"
+            }
+          ]
         },
         "worker": {
           "description": "Disable or configure parsing of WebWorker syntax like new Worker() or navigator.serviceWorker.register().",
@@ -1431,6 +1542,51 @@
     "Mode": {
       "description": "Enable production optimizations or development hints.",
       "enum": ["development", "production", "none"]
+    },
+    "ModuleFilterItemTypes": {
+      "description": "Filtering value, regexp or function.",
+      "cli": {
+        "helper": true
+      },
+      "anyOf": [
+        {
+          "instanceof": "RegExp",
+          "tsType": "RegExp"
+        },
+        {
+          "type": "string",
+          "absolutePath": false
+        },
+        {
+          "instanceof": "Function",
+          "tsType": "((name: string, module: import('../lib/stats/DefaultStatsFactoryPlugin').StatsModule, type: 'module' | 'chunk' | 'root-of-chunk' | 'nested') => boolean)"
+        }
+      ]
+    },
+    "ModuleFilterTypes": {
+      "description": "Filtering modules.",
+      "cli": {
+        "helper": true
+      },
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "description": "Rule to filter.",
+            "cli": {
+              "helper": true
+            },
+            "oneOf": [
+              {
+                "$ref": "#/definitions/ModuleFilterItemTypes"
+              }
+            ]
+          }
+        },
+        {
+          "$ref": "#/definitions/ModuleFilterItemTypes"
+        }
+      ]
     },
     "ModuleOptions": {
       "description": "Options affecting the normal modules (`NormalModuleFactory`).",
@@ -2350,6 +2506,9 @@
         "chunkLoadingGlobal": {
           "$ref": "#/definitions/ChunkLoadingGlobal"
         },
+        "clean": {
+          "$ref": "#/definitions/Clean"
+        },
         "compareBeforeEmit": {
           "$ref": "#/definitions/CompareBeforeEmit"
         },
@@ -2516,6 +2675,9 @@
         },
         "chunkLoadingGlobal": {
           "$ref": "#/definitions/ChunkLoadingGlobal"
+        },
+        "clean": {
+          "$ref": "#/definitions/Clean"
         },
         "compareBeforeEmit": {
           "$ref": "#/definitions/CompareBeforeEmit"
@@ -3817,7 +3979,14 @@
         },
         "errorDetails": {
           "description": "Add details to errors (like resolving log).",
-          "type": "boolean"
+          "anyOf": [
+            {
+              "enum": ["auto"]
+            },
+            {
+              "type": "boolean"
+            }
+          ]
         },
         "errorStack": {
           "description": "Add internal stack trace to errors.",
@@ -3841,7 +4010,7 @@
               "type": "boolean"
             },
             {
-              "$ref": "#/definitions/FilterTypes"
+              "$ref": "#/definitions/ModuleFilterTypes"
             }
           ]
         },
@@ -3849,7 +4018,7 @@
           "description": "Suppress assets that match the specified filters. Filters can be Strings, RegExps or Functions.",
           "oneOf": [
             {
-              "$ref": "#/definitions/FilterTypes"
+              "$ref": "#/definitions/AssetFilterTypes"
             }
           ]
         },
@@ -3860,7 +4029,7 @@
               "type": "boolean"
             },
             {
-              "$ref": "#/definitions/FilterTypes"
+              "$ref": "#/definitions/ModuleFilterTypes"
             }
           ]
         },
@@ -4048,7 +4217,7 @@
           "description": "Suppress listing warnings that match the specified filters (they will still be counted). Filters can be Strings, RegExps or Functions.",
           "oneOf": [
             {
-              "$ref": "#/definitions/FilterTypes"
+              "$ref": "#/definitions/WarningFilterTypes"
             }
           ]
         }
@@ -4110,6 +4279,51 @@
       "description": "A unique name of the webpack build to avoid multiple webpack runtimes to conflict when using globals.",
       "type": "string",
       "minLength": 1
+    },
+    "WarningFilterItemTypes": {
+      "description": "Filtering value, regexp or function.",
+      "cli": {
+        "helper": true
+      },
+      "anyOf": [
+        {
+          "instanceof": "RegExp",
+          "tsType": "RegExp"
+        },
+        {
+          "type": "string",
+          "absolutePath": false
+        },
+        {
+          "instanceof": "Function",
+          "tsType": "((warning: import('../lib/stats/DefaultStatsFactoryPlugin').StatsError, value: string) => boolean)"
+        }
+      ]
+    },
+    "WarningFilterTypes": {
+      "description": "Filtering warnings.",
+      "cli": {
+        "helper": true
+      },
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "description": "Rule to filter.",
+            "cli": {
+              "helper": true
+            },
+            "oneOf": [
+              {
+                "$ref": "#/definitions/WarningFilterItemTypes"
+              }
+            ]
+          }
+        },
+        {
+          "$ref": "#/definitions/WarningFilterItemTypes"
+        }
+      ]
     },
     "WasmLoading": {
       "description": "The method of loading WebAssembly Modules (methods included by default are 'fetch' (web/WebWorker), 'async-node' (node.js), but others might be added by plugins).",

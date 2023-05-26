@@ -203,7 +203,10 @@ class BackendController extends Controller
         // Заработано по карьерной программе:
         $careerProgram = $userStatisticPeriod->getCareerProgram();
         // Заработано по линейной программе:
-        $linearProgram = $userStatisticPeriod->getLinearProgram();
+        //закриваю по тз
+        //  $linearProgram = $userStatisticPeriod->getLinearProgram();
+        $linearProgram = 0;  // щоб не ламати системи)
+
         // Матчинг бонус:
         $matchingBonus = $userStatisticPeriod->getMatchingBonus();
         // Лидерский бонус:
@@ -263,7 +266,7 @@ class BackendController extends Controller
             ])
             ->whereBetween('created_at', [$datapickerFrom, $datapickerTo])
             ->sum('amount_usd');
-                
+
         // Баланс:
         // Доступно к выводу:
 
@@ -274,9 +277,9 @@ class BackendController extends Controller
             ->where('attached_users.user_id','=',$instanceUser->id)
             ->get();
 
-            // SELECT email FROM `fakes_users` join `users` on(`users`.id = `fakes_users`.fake_id) WHERE `fakes_users`.user_id = 1092 
+            // SELECT email FROM `fakes_users` join `users` on(`users`.id = `fakes_users`.fake_id) WHERE `fakes_users`.user_id = 1092
 
-            // SELECT email FROM `users` join `fakes_users` on(`users`.id = `fakes_users`.fake_id) WHERE `fakes_users`.user_id = 1092       
+            // SELECT email FROM `users` join `fakes_users` on(`users`.id = `fakes_users`.fake_id) WHERE `fakes_users`.user_id = 1092
 
 
         return view('dashboard.lk', compact(
