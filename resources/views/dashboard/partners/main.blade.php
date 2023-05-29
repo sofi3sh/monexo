@@ -93,15 +93,15 @@
             <div class="clearfix" style="margin-bottom: 25px;"></div>
             <div class="clearfix" style="margin-bottom: 20px;"></div>
 
-            <!-- <a href="#rules-career"
+     <a href="#rules-career"
                data-toggle="collapse"
                role="button"
                aria-expanded="false"
                aria-controls="rules-career">@lang('website_careers.table.table_title')</a>
 
-            @include('dashboard.partners.rules-career') -->
+            @include('dashboard.partners.rules-career')
 
-            <img src="{{ asset('monexo/partners-en.svg') }}" style="width: 100%; overflow-x: auto" class="my-4">
+{{--            <img src="{{ asset('monexo/partners-en.svg') }}" style="width: 100%; overflow-x: auto" class="my-4">--}}
 
             <div class="clearfix" style="margin-bottom: 22px;"></div>
         </div>

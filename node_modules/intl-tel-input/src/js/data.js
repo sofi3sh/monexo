@@ -77,6 +77,11 @@ var allCountries = [
     "297"
   ],
   [
+    "Ascension Island",
+    "ac",
+    "247"
+  ],
+  [
     "Australia",
     "au",
     "61",
@@ -384,6 +389,11 @@ var allCountries = [
     "Estonia (Eesti)",
     "ee",
     "372"
+  ],
+  [
+    "Eswatini",
+    "sz",
+    "268"
   ],
   [
     "Ethiopia",
@@ -1120,11 +1130,6 @@ var allCountries = [
     "47",
     1,
     ["79"]
-  ],
-  [
-    "Swaziland",
-    "sz",
-    "268"
   ],
   [
     "Sweden (Sverige)",

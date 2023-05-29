@@ -10,6 +10,7 @@ const ChunkGraph = require("./ChunkGraph");
 const DependenciesBlock = require("./DependenciesBlock");
 const ModuleGraph = require("./ModuleGraph");
 const RuntimeGlobals = require("./RuntimeGlobals");
+const { first } = require("./util/SetHelpers");
 const { compareChunksById } = require("./util/comparators");
 const makeSerializable = require("./util/makeSerializable");
 
@@ -67,6 +68,7 @@ const makeSerializable = require("./util/makeSerializable");
  * @property {Map<string, Source>} sources the resulting sources for all source types
  * @property {Map<string, any>=} data the resulting data for all source types
  * @property {ReadonlySet<string>} runtimeRequirements the runtime requirements
+ * @property {string=} hash a hash of the code generation result (will be automatically calculated from sources and runtimeRequirements if not provided)
  */
 
 /**
@@ -629,9 +631,11 @@ class Module extends DependenciesBlock {
 	 */
 	hasReasonForChunk(chunk, moduleGraph, chunkGraph) {
 		// check for each reason if we need the chunk
-		for (const connection of moduleGraph.getIncomingConnections(this)) {
-			if (!connection.isTargetActive(chunk.runtime)) continue;
-			const fromModule = connection.originModule;
+		for (const [
+			fromModule,
+			connections
+		] of moduleGraph.getIncomingConnectionsByOriginModule(this)) {
+			if (!connections.some(c => c.isTargetActive(chunk.runtime))) continue;
 			for (const originChunk of chunkGraph.getModuleChunksIterable(
 				fromModule
 			)) {
@@ -703,9 +707,7 @@ class Module extends DependenciesBlock {
 		}
 	) {
 		const { chunkGraph, runtime } = context;
-		hash.update(`${chunkGraph.getModuleId(this)}`);
-		const exportsInfo = chunkGraph.moduleGraph.getExportsInfo(this);
-		exportsInfo.updateHash(hash, runtime);
+		hash.update(chunkGraph.getModuleGraphHash(this, runtime));
 		if (this.presentationalDependencies !== undefined) {
 			for (const dep of this.presentationalDependencies) {
 				dep.updateHash(hash, context);
@@ -797,9 +799,7 @@ class Module extends DependenciesBlock {
 			runtime: undefined
 		};
 		const sources = this.codeGeneration(codeGenContext).sources;
-		return type
-			? sources.get(type)
-			: sources.get(this.getSourceTypes().values().next().value);
+		return type ? sources.get(type) : sources.get(first(this.getSourceTypes()));
 	}
 
 	/* istanbul ignore next */
