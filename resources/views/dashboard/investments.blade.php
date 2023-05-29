@@ -64,16 +64,16 @@
                 </div>
             </div> --}}
 
-            {{-- Це панелька з назвами пакетів --}}
             <div class="plans-section">
+                {{-- Це панелька з назвами пакетів --}}
                 <div class="row justify-content-center">
                     <div class="plan-tabs-wrapper">
                         @foreach($marketingPlanGroups['packages'] as $name => $some)
                             @foreach($marketingPlanGroups['cssClasses'] as $nameCss => $css)
                                 @if($name == $nameCss)
                                     <div class="tab-switcher {{ $css }}">
-                                        @if(strpos($name,'Light') !== false) Regular @endif
-                                        @if(strpos($name,'Mini') !== false) Random @endif
+                                        @if($name == 'Light') Regular @endif
+                                        @if($name == 'Mini') Random @endif
                                     </div>
                                 @endif
                             @endforeach
@@ -103,6 +103,7 @@
                     @endforeach
                 </div>
             </div>--}}
+                {{-- Пакети --}}
             <div class="row">
                 {{-- Light == Regular --}}
                 <div class="col-12 plan plan-first justify-content-center active">
@@ -110,7 +111,7 @@
                         @foreach($marketingPlanGroups['packages']['Light'] as $marketingPlanGroup)
                             <div class="col-auto">
                                 <div class="card card-stats p-4">
-{{--                                    <small class="text-center" style="margin-top:-0.7rem;">@lang('website_home.package.30_days_avg_income', ['from' => '5.5%', 'to' => '13.7%'])</small>--}}
+                                    <small class="text-center" style="margin-top:-0.7rem;">@lang('website_home.package.week_accruals')</small>
                                     <div class="d-table ml-auto mr-auto pb-4 mt-2">
                                         <div class="d-table-row">
                                             <div class="d-table-cell pr-3 py-2 pl-3" style="width: 70%"><b>@lang('website_home.package.week_income', ['percent' => ''])</b></div>
@@ -124,12 +125,21 @@
                                         </div>
                                         <div class="d-table-row">
                                             <div class="d-table-cell pr-3 py-2 pl-3"><b>@lang('website_home.package.force_close')</b></div>
-                                            <div class="d-table-cell py-1 pr-3">0%, @lang('website_home.package.delay_days', ['days' => 25])</div>
+                                            <div class="d-table-cell py-1 pr-3">@lang('website_home.package.yes')</div>
                                         </div>
-{{--                                        @dd($marketingPlanGroup->body_on)--}}
                                         <div class="d-table-row">
-                                            <div class="d-table-cell pr-3 py-2 pl-3"><b>@lang('website_home.package.invest_body')</b></div>
-                                            <div class="d-table-cell py-1 pr-3">@lang('website_home.package.disable')</div>
+                                            <div class="d-table-cell pr-3 py-2 pl-3"><b>@lang('website_home.package.autoreinvest')</b></div>
+                                            <div class="d-table-cell py-1 pr-3">@lang('website_home.package.yes')</div>
+                                        </div>
+                                        <div class="d-table-row">
+                                            <div class="d-table-cell pr-3 py-2 pl-3"><b>@lang('website_home.package.first_accruals')</b></div>
+                                            <div class="d-table-cell py-1 pr-3">@lang('website_home.package.delay_days', ['days' => 7])</div>
+                                        </div>
+                                        <div class="d-table-row">
+                                            <div class="d-table-cell pr-3 py-2 pl-3"><b>@lang('website_home.package.min_invest')</b></div>
+                                            <div class="d-table-cell py-1 pr-3">
+                                                {{ $marketingPlanGroup->min_invest_sum }}$
+                                            </div>
                                         </div>
                                     </div>
                                     <form class="js-package js-package-{{ \App\Models\Home\MarketingPlan::GROUP_LIGHT }}">
@@ -145,23 +155,10 @@
                                                            max="{{ $marketingPlanGroup->max_invest_sum }}"
                                                            value="{{ $marketingPlanGroup->min_invest_sum }}"
                                                            step="1"
-{{--                                                           oninput="this.form.amountRange.value=this.value"--}}
                                                     />
                                                 </div>
                                             </div>
                                         </div>
-{{--                                        <div class="d-flex flex-row justify-content-center pb-4">--}}
-{{--                                            <h4 class="mb-0 mr-2">${{ number_format($marketingPlanGroup->min_invest_sum, 0, '.', ' ') }}</h4>--}}
-{{--                                            <input class="flex-grow-1 range"--}}
-{{--                                                   type="range"--}}
-{{--                                                   name="amountRange"--}}
-{{--                                                   min="{{ $marketingPlanGroup->min_invest_sum }}"--}}
-{{--                                                   value="{{ $marketingPlanGroup->min_invest_sum }}"--}}
-{{--                                                   max="{{ $marketingPlanGroup->max_invest_sum }}"--}}
-{{--                                                   step="1000"--}}
-{{--                                                   oninput="this.form.amountInput.value=this.value" />--}}
-{{--                                            <h4 class="mb-0 ml-2">${{ number_format($marketingPlanGroup->max_invest_sum, 0, '.', ' ') }}</h4>--}}
-{{--                                        </div>--}}
                                     </form>
 
                                     <button class="investment-btn btn btn-sm btn-primary"
@@ -188,7 +185,7 @@
                         @foreach($marketingPlanGroups['packages']['Mini'] as $marketingPlanGroup)
                             <div class="col-auto">
                                 <div class="card card-stats p-4">
-{{--                                    <small class="text-center" style="margin-top:-0.7rem;">@lang('website_home.package.30_days_avg_income_percent', ['percent' => '33%'])</small>--}}
+                                    <small class="text-center" style="margin-top:-0.7rem;">@lang('website_home.package.weekdays_accruals')</small>
                                     <div class="d-table ml-auto mr-auto pb-4 mt-2">
                                         <div class="d-table-row">
                                             <div class="d-table-cell pr-3 py-2 pl-3" style="width: 70%"><b>@lang('website_home.package.daily_income', ['percent' => ''])</b></div>
@@ -196,10 +193,6 @@
                                                 {{ $marketingPlanGroup->min_profit }} - {{ $marketingPlanGroup->max_profit }}%
                                             </div>
                                         </div>
-{{--                                        <div class="d-table-row">--}}
-{{--                                            <div class="d-table-cell pr-3 py-2 pl-3"><b>@lang('website_home.package.period', ['days'=> ''])</b></div>--}}
-{{--                                            <div class="d-table-cell py-1 pr-3">@lang('website_home.package.period_days', ['days'=> 220])</div>--}}
-{{--                                        </div>--}}
                                         <div class="d-table-row">
                                             <div class="d-table-cell pr-3 py-2 pl-3"><b>@lang('website_home.package.force_close')</b></div>
                                             <div class="d-table-cell py-1 pr-3">@lang('website_home.package.no')</div>
@@ -208,7 +201,19 @@
                                             <div class="d-table-cell pr-3 py-2 pl-3"><b>@lang('website_home.package.invest_body')</b></div>
                                             <div class="d-table-cell py-1 pr-3">@lang('website_home.package.enable')</div>
                                         </div>
+                                        <div class="d-table-row">
+                                            <div class="d-table-cell pr-3 py-2 pl-3"><b>@lang('website_home.package.first_accruals')</b></div>
+                                            <div class="d-table-cell py-1 pr-3">@lang('website_home.package.delay_day', ['days' => 2])</div>
+                                        </div>
+                                        <div class="d-table-row">
+                                            <div class="d-table-cell pr-3 py-2 pl-3"><b>@lang('website_home.package.min_invest')</b></div>
+                                            <div class="d-table-cell py-1 pr-3">
+                                                {{ $marketingPlanGroup->min_invest_sum }}$
+                                            </div>
+                                        </div>
                                     </div>
+                                    <small class="mb-1">@lang('website_home.package.profit_from_the_body', ['percent' => '180%'])</small>
+
                                     <form class="js-package js-package-{{ \App\Models\Home\MarketingPlan::GROUP_MINI }}">
                                         <div class="row justify-content-center">
                                             <div class="col-md-12">
@@ -623,8 +628,6 @@
                             <th>{{$item->created_at}}</th>
                             <td>
                                 @if(isset($item->marketingPlan->name))
-{{--                                    @if(strpos($item->marketingPlan->name,'Standard') !== false) SERVER 1 @endif--}}
-{{--                                    @if(strpos($item->marketingPlan->name,'Business') !== false) SERVER 2 @endif--}}
                                     @if(strpos($item->marketingPlan->name,'Light') !== false) Regular @endif
                                     @if(strpos($item->marketingPlan->name,'Mini') !== false) Random @endif
                                 @endif
@@ -634,7 +637,7 @@
                             <td>{{$item->$codeProfit}} {{strtoupper($item->marketingPlan->currency_type)}}</td>
                             @if($item->isStopped())
                                 <td class="text-warning">
-                                    {{ __('website_home.package.stopped') }}
+                                    {{ __('website_home.package.expect') }}
                                 </td>
                             @else
                                 <td class="{{!is_null($item->end_at)?'text-warning':'text-success'}}">
@@ -653,9 +656,9 @@
                                         @if (
                                             (float)$item->$codeProfit &&
                                             (
-                                                $item->marketingPlan->isNewByIdAndName(\App\Models\Home\MarketingPlan::GROUP_BUSINESS) ||
-                                                $item->marketingPlan->isNewByIdAndName(\App\Models\Home\MarketingPlan::GROUP_CRYPTO_BUSINESS) ||
-                                                $item->marketingPlan->isNewByIdAndName(\App\Models\Home\MarketingPlan::GROUP_NEW_LIGHT) ||
+//                                                $item->marketingPlan->isNewByIdAndName(\App\Models\Home\MarketingPlan::GROUP_BUSINESS) ||
+//                                                $item->marketingPlan->isNewByIdAndName(\App\Models\Home\MarketingPlan::GROUP_CRYPTO_BUSINESS) ||
+//                                                $item->marketingPlan->isNewByIdAndName(\App\Models\Home\MarketingPlan::GROUP_NEW_LIGHT) ||
                                                 $item->marketingPlan->isNewByIdAndName(\App\Models\Home\MarketingPlan::GROUP_MINI) ||
                                                 $item->marketingPlan->isNewByIdAndName(\App\Models\Home\MarketingPlan::GROUP_LIGHT)
                                             )
