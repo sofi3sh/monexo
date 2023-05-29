@@ -154,8 +154,10 @@ class UserMarketingPlan extends Model
         $codeBalans = 'balance_' . $code;
         $codeInvested = 'invested_' . $code;
         $code_balance_after_transaction = 'balance_' . $code . '_after_transaction';
+        // профіт мінус комісія 2 usd
+        $profit_with_commission = $this->$codeProfit - 2;
 
-        if (!$this->$codeProfit || $this->$codeProfit <= 0) {
+        if (!$profit_with_commission || $profit_with_commission <= 0) {
             return;
         }
 
@@ -163,19 +165,19 @@ class UserMarketingPlan extends Model
         $transaction = new Transaction();
         $transaction->user_id = $this->user_id;
         $transaction->transaction_type_id = TransactionsTypesConsts::PROFIT_TYPE_ID;
-        $transaction->$codeAmount = $this->$codeProfit;
+        $transaction->$codeAmount = $profit_with_commission;
         if ($code != 'usd') {
-            $transaction->amount_crypto = $this->$codeProfit;
+            $transaction->amount_crypto = $profit_with_commission;
         }
 
-        $transaction->$code_balance_after_transaction = $this->$codeBalans + $this->$codeProfit;
+        $transaction->$code_balance_after_transaction = $this->$codeBalans + $profit_with_commission;
         $transaction->save(); // после сохранения обновляется баланс пользователя
 
         // оповещение о выводе прибыли с пакета
         $alert                    = new Alert();
         $alert->user_id           = $this->user_id;
         $alert->alert_id          = AlertType::WITHDRAW_PACKAGE_PROFIT;
-        $alert->amount            = $this->$codeProfit;
+        $alert->amount            = $profit_with_commission;
         $alert->currency_id       = $transaction->currency_id;
         $alert->marketing_plan_id = $this->marketing_plan_id;
         $alert->currency_type     = $code;
