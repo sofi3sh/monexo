@@ -207,20 +207,24 @@ class BackendController extends Controller
         //  $linearProgram = $userStatisticPeriod->getLinearProgram();
         $linearProgram = 0;  // щоб не ламати системи)
 
-        // Матчинг бонус:
+        //Матчинг бонус:
         $matchingBonus = $userStatisticPeriod->getMatchingBonus();
+
+
         // Лидерский бонус:
 //        $leadershipBonus = $userStatisticPeriod->getLeadershipBonus();
         // Всего по партнерской программе = Карьерная + Линейная + Матчинг бонус + Лидерский бонус
         $totalAffiliateProgram = $careerProgram + $linearProgram + $matchingBonus; // + $leadershipBonus;
         // Прибыль от инвестиций:
         $profitOfInvestments = $userStatisticPeriod->getProfitOfInvestments();
+
         // Всего заработано = Всего по партнерской программе + Прибыль от инвестиций
         $totalEarned = $totalAffiliateProgram + $profitOfInvestments;
         // Выведено средств:
         $fundsWithdrawn = $userStatisticPeriod->getFundsWithdrawn();
         // Инвестиций:
         $investment =  $userStatisticPeriod->getInvestment();
+
         // Пополнений:
         $replenishment = $userStatisticPeriod->getReplenishmentInvest();
 
@@ -319,6 +323,7 @@ class BackendController extends Controller
             'userFakes'
         ));
     }
+
 
     /**
      * @param User $user
