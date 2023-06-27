@@ -94,7 +94,7 @@ class AccrueProfit extends Command
         $percentmatchingBonus = floatval($user->getMatchingBonusPercent());
         $matchingBonus = 0;
 
-        // @var UserMarketingPlan[] $marketingPlanPartners 
+        // @var UserMarketingPlan[] $marketingPlanPartners
         $marketingPlanPartners = UserMarketingPlan::whereIn('user_id', $user->refferrals->pluck('id'))->whereNull('deleted_at')
                                 ->whereNull('end_at')
                                 ->get();
@@ -162,9 +162,10 @@ class AccrueProfit extends Command
     $user->last_marketing_plan_profit = 0;
     $this->accrue_log->info('------------------------------------------- ');
     $this->accrue_log->info($user->email . ' ------------ Начисляем пользователю ------- ');
-                    // Получаем все маркетинговые планы пользователя
+    // Получаем все маркетинговые планы пользователя
     $userMarketingPlans = $user->userMarketingPlans;
-        // Если у пользователя есть маркетинговый план
+
+    // Если у пользователя есть маркетинговый план
     if (!is_null($userMarketingPlans)) {
 
         foreach($userMarketingPlans as $userMarketingPlan) {
@@ -185,6 +186,16 @@ class AccrueProfit extends Command
                 continue;
             }
 
+            if ($userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_MINI)) {
+                if ($userMarketingPlan->created_at->diffInHours(now()) <= 48) {
+                    continue;
+                }
+
+                if (now()->isWeekend()) {
+                    continue;
+                }
+            }
+
             // Получаем маркетинг план (по таблице-справочнику)
             // Если start_at == null поставить текущую дату и перейти к следующему плану
             if(is_null($userMarketingPlan->start_at)){
@@ -192,8 +203,10 @@ class AccrueProfit extends Command
                 $userMarketingPlan->save();
             }else{
                 $marketingPlan = $userMarketingPlan->marketingPlan;
+
                 // Создаем транзакцию начисления по депозиту
                 $profit = $this->createProfitTransaction($user, $userMarketingPlan, $marketingPlan, $percents);
+
                 // Сохраняем, чтобы потом менее затратно рассчитать доходность по линии
                 $user->last_marketing_plan_profit += $profit;
                 // Если в инвест плане $userMarketingPlan->days_left == 0 закрываем план
@@ -209,6 +222,16 @@ class AccrueProfit extends Command
 //                    $userMarketingPlan->save();
                     $this->accrue_log->info("     Закрываем план.");
                 }
+
+                // якщо пакет == Random, закрити план при досягненні прибутку 180%
+                if ($marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_MINI)) {
+                    if ($userMarketingPlan->profit_usd >= $userMarketingPlan->invested_usd * 0.1) {
+                        $this->closePlan($user, $userMarketingPlan);
+
+                        $this->accrue_log->info("     Закрываем план.");
+                    }
+                }
+
                 $userMarketingPlan->save();
             }
         }
@@ -265,10 +288,18 @@ class AccrueProfit extends Command
         $userMarketingPlan->save();
 
         $amount = $userMarketingPlan->$codeInvested;
-        if ( MarketingPlan::MP_USD_INVITATION != $userMarketingPlan->marketing_plan_id ) {
+
+
+        if ($userMarketingPlan->marketing_plan_id == 24) {
+            $commission = ($userMarketingPlan->$codeInvested * $userMarketingPlan->marketingPlan->withdrawal_commission) / 100;
+            $amount     = $userMarketingPlan->$codeInvested - $commission;
             $user->$codeBalans += $amount;
             $user->save();
         }
+
+//        if ( MarketingPlan::MP_USD_INVITATION != $userMarketingPlan->marketing_plan_id ) {
+//
+//        }
 
         $alert                    = new Alert;
         $alert->user_id           = $user->id;
@@ -490,7 +521,7 @@ class AccrueProfit extends Command
             $marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_LIGHT) ||
             $marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_NEW_LIGHT)
         ) {
-                        
+
             $maxDurationDays = $userMarketingPlan->marketingPlan->max_duration;
             $daysDiff = $maxDurationDays - $userMarketingPlan->days_left;
             if ($userMarketingPlan->days_left === $maxDurationDays || $daysDiff % 7 !== 0 || $userMarketingPlan->isStopped()) {
@@ -499,8 +530,8 @@ class AccrueProfit extends Command
                 return true;
             }
             $percent = $percents[$marketingPlan->id];
-            // тут был сложный процент раньше + $userMarketingPlan->$codeProfit
-            $amountUsd = $userMarketingPlan->$codeInvested ;
+
+            $amountUsd = $userMarketingPlan->$codeInvested + $userMarketingPlan->$codeProfit;
         } elseif ($marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_MINI)) {
             $percent = $percents[$marketingPlan->id];
             $amountUsd = $userMarketingPlan->$codeInvested;

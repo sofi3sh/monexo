@@ -31,9 +31,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-Log::info('***CR0N RUN!');
+        Log::info('***CR0N RUN!');
+
         $schedule->command('AccrueProfit:Run')->daily();
         $schedule->command('UpdateMentorBonusLevel:Run')->daily();
+
+
+//        $schedule->command('AccrueProfit:Run')->everyMinute();
+
+//        $schedule->command('AccrueProfit:Run')->daily();
+//        $schedule->command('UpdateMentorBonusLevel:Run')->daily();
 
         //$schedule->command('accrue:leadership_bonus')->monthly();
         //$schedule->command('SendNewsOnEmail:send', ['--period' => 'month'])->everyMinute();

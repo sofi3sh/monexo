@@ -47,7 +47,11 @@ class Bonus extends Model
             $bonus = (float)$item->bonus ? '$' . number_format($item->bonus, 2, '.', ' ') : '-';
             $personalDeposit = (int)$item->personal_deposit ? '$' . number_format($item->personal_deposit, 0, '', ' ') : '-';
             $teamTurnover = (int)$item->team_turnover ? '$' . number_format($item->team_turnover, 0, '', ' ') : '-';
+            $royaltybonus = (int)$item->royalty_bonus ? $item->royalty_bonus. '%' : '-';
+            $invitesInvestor = (int)$item->invites_investor ? $item->invites_investor. '%' : '-';
             $matchingBonus = (float)$item->matching_bonus ? $item->matching_bonus . '%' : '-';
+            $matchingBonus2 = (float)$item->matching_bonus_2 ? $item->matching_bonus_2 . '%' : '-';
+            $matchingBonus3 = (float)$item->matching_bonus_3 ? $item->matching_bonus_3 . '%' : '-';
             $leadershipBonus = (float)$item->leadership_bonus ? $item->leadership_bonus . '%' : '-';
             $isInvitationDepositAvailable = $item->is_invitation_deposit_available ? __('Yes') : '-';
             $isRegionalRepresentativeStatusAvailable = $item->is_regional_representative_status_available ? __('Yes') : '-';
@@ -58,7 +62,11 @@ class Bonus extends Model
                 'bonus' => $bonus,
                 'personal_deposit' => $personalDeposit,
                 'team_turnover' => $teamTurnover,
+                'invites_investor'   => $invitesInvestor,
+                'royalty_bonus'   => $royaltybonus,
                 'matching_bonus' => $matchingBonus,
+                'matching_bonus_2' => $matchingBonus2,
+                'matching_bonus_3' => $matchingBonus3,
                 'leadership_bonus' => $leadershipBonus,
                 'is_invitation_deposit_available' => $isInvitationDepositAvailable,
                 'is_regional_representative_status_available' => $isRegionalRepresentativeStatusAvailable,
