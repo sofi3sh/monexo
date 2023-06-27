@@ -96,10 +96,7 @@ class MarketingPlanController extends Controller
         if (
             $userMarketingPlan &&
             $userMarketingPlan->user_id === Auth::user()->id && (
-                $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_BUSINESS) ||
-                $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_CRYPTO_BUSINESS) ||
-                $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_LIGHT) ||
-                $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_NEW_LIGHT)
+                $userMarketingPlan->marketingPlan->isNewByIdAndName(MarketingPlan::GROUP_LIGHT)
             )
         ) {
             $userMarketingPlan->withdrawProfit();
@@ -597,7 +594,7 @@ class MarketingPlanController extends Controller
                         return back()->with($msg_type, $msg);
                     } else {
                         $currentUserMarketingPlan->withdrawProfit();
-                        $currentUserMarketingPlan->update(['days_left' => 25]);
+                        $currentUserMarketingPlan->update(['days_left' => 15]);
                         $currentUserMarketingPlan->stopWithoutClose();
                         $msg_type = 'flash_success';
                         $msg =  trans('base_attention.marketing_plan.plan_close');
