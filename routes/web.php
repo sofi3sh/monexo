@@ -16,6 +16,9 @@
 use Illuminate\Support\Facades\Auth;
 use Svg\Tag\Group;
 
+Route::get('/ovtable', [\App\Http\Controllers\Backend\ObonusController::class, 'matching'])->name('ovtable');
+
+
 Route::as('website.')
 //    ->middleware(['cache.headers:private;max_age=36'])
 //    ->middleware(['cache.control'])
@@ -692,3 +695,8 @@ Route::prefix('tt-mon/' . config('finance.fin_mon_link'))
 
 
 Route::get('/cities/{country}', 'API\CitiesController@index');
+
+
+
+
+

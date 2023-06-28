@@ -6,6 +6,8 @@ use App\Models\Consts\PackageConst;
 use App\Models\CustomTransaction;
 use App\Models\InviteCommission;
 use App\Models\Map;
+use App\Models\Otransaction;
+use App\Models\Ouser;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Modules\Blog\Models\Post;
@@ -70,6 +72,11 @@ use Session;
 use Telegram\Bot\Objects\Venue;
 use App\Models\FakeUser;
 
+
+
+
+
+
 class BackendController extends Controller
 {
     /**
@@ -80,6 +87,17 @@ class BackendController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'verified', 'preventBackHistory']);
+    }
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function matchingBonus()
+    {
+        $users = Ouser::all();
+        $transactions = Otransaction::all();
     }
 
     /**
@@ -213,6 +231,7 @@ class BackendController extends Controller
 
         // Лидерский бонус:
 //        $leadershipBonus = $userStatisticPeriod->getLeadershipBonus();
+
         // Всего по партнерской программе = Карьерная + Линейная + Матчинг бонус + Лидерский бонус
         $totalAffiliateProgram = $careerProgram + $linearProgram + $matchingBonus; // + $leadershipBonus;
         // Прибыль от инвестиций:
