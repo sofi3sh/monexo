@@ -152,7 +152,6 @@ class AccrueProfit extends Command
 
             $user->balance_usd += $matchingBonus;
             $user->bonuses_usd += $matchingBonus;
-
             $user->save();
         }
 
