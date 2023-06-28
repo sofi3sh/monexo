@@ -64,6 +64,8 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
         'locale',
         'ref_code',
         'parent_id',
+        'parent_second_id',
+        'parent_third_id',
         'balance_usd',
         'balance_btc',
         'balance_eth',

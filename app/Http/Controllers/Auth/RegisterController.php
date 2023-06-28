@@ -137,6 +137,22 @@ class RegisterController extends Controller
             $referralId = $specifiedReferralId;
         }
 
+        //реферали 2 и 3 линии
+        if ($referralId == 1) {
+            $referralSecondId = 1;
+            $referralThirdId = 1;
+            }  else {
+                $referralSecondParent = User::where('id', $referralId)->first();
+                $referralSecondId = $referralSecondParent->parent_id;
+                if ($referralSecondId == 1) {
+                    $referralThirdId = 1;
+                    } else {
+                        $referralThirdParent = User::where('id', $referralSecondId)->first();
+                        $referralThirdId = $referralThirdParent->parent_id;
+                    }
+            }
+
+
 
 //        referral_deposit_id
         $user = User::create([
@@ -153,6 +169,10 @@ class RegisterController extends Controller
             'ref_code'           => $refCode,
             'is_trading_account' => array_key_exists('is_trading_account', $data) ? true : false,
             'parent_id'          => $referralId, //Если пользователь пришел не по реф. ссылке - помещаем под user_id=1
+
+            'parent_second_id'   => $referralSecondId,
+            'parent_third_id'    => $referralThirdId,
+
             'password'           => Hash::make($data['password']),
         ]);
 

@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Models;
+
+//use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Ouser extends Model
+{
+//    use HasFactory;
+
+    public $timestamps = true;
+    protected $table = 'users';
+
+//    protected static $factory = Ouser::class;
+
+    protected $fillable = [
+        'id',
+        'name',
+        'surname',
+        'locale',
+        'email',
+        'google_id',
+        'twofa_secret',
+        'telegram_id',
+        'telegram_verification_required',
+        'telegram_verification_status',
+        'phone',
+        'replenishment',
+        'balance_usd',
+        'debt_usd',
+        'debt_usd_fixed',
+        'balance_eth',
+        'balance_btc',
+        'balance_pzm',
+        'invested_usd',
+        'invested_eth',
+        'invested_btc',
+        'invested_pzm',
+        'marketplace_purchased_shares',
+        'invested_usd_to_marketplace',
+        'invested_eth_to_marketplace',
+        'invested_btc_to_marketplace',
+        'invested_pzm_to_marketplace',
+        'profit_usd',
+        'profit_eth',
+        'profit_btc',
+        'profit_pzm',
+        'referrals_usd',
+        'referrals_eth',
+        'referrals_btc',
+        'referrals_pzm',
+        'withdrawal_usd',
+        'withdrawal_eth',
+        'withdrawal_btc',
+        'withdrawal_pzm',
+        'withdrawal_request_usd',
+        'bonuses_usd',
+        'bonus_level',
+        'achieved_bonus_level',
+        'bonuses_deposit',
+        'accrual_currency_id',
+        'parent_id',
+        'parent_second_id',
+        'parent_third_id',
+        'right_id',
+        'left_id',
+        'ref_code',
+        'exchange_name',
+        'api_key',
+        'visa',
+        'mastercard',
+        'qiwi',
+        'webmoney',
+        'yandexMoney',
+        'is_trading_account',
+        'is_regional_representative',
+        'motivation_plan_id',
+        'motivation_plan_start_at',
+        'last_marketing_plan_profit',
+        'admin',
+        'fake',
+        'email_verified_at',
+        'phone_verified_at',
+        'phone_verified_to',
+        'password',
+        'email_reset_token',
+        'new_email',
+        'remember_token',
+        'editor_id',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'country',
+        'city',
+        'age',
+        'date_birthday',
+        'add_contact',
+        'is_allow_withdraw_crypto',
+        'is_active',
+        'is_verif',
+        'verif_type',];
+}
