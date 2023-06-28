@@ -59,7 +59,7 @@ class ObonusController extends Controller
                         //DB create
                         $matchng_profit = $currentSum * ($percent_matching[$i] / 100);
 
-                        $sum[$j] = $currentUser . "-" . $percent_matching[$i] . "-" . $currentSum;
+                        $sum[$j] = $parents[$i] . "-" . $percent_matching[$i] . "-" . $currentSum;
                             $j++;
 //                        $newtrans = Otransaction::create([
 //                            'user_id' => $parents[$i],
@@ -189,16 +189,6 @@ class ObonusController extends Controller
                 }
             }
 
-
-
-
-
-
-
-
-
-
-
             //всі рефераили - вивід
             $all_users = array_merge($id_one_users, $id_two_users, $id_three_users, $id_four_users, $id_five_users);
             dd($all_users);
@@ -216,6 +206,54 @@ class ObonusController extends Controller
 
         $result = [1, 2, 3];
 //        $result = 123;
+        return view('ovtable', ['result' => $result]);
+    }
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function invest () {
+//        $persent_invest = 3 / 100;
+        $level_invest = 10;
+        $users = Ouser::where('bonus_level', '>=', $level_invest)->get();
+
+        $current_users_id= [];
+
+        if (count($users) === 1) {
+            foreach ($users as $user) {
+                $current_users_id[] = $user->id;
+                //для даного користувача визначити суму від якої визнвчати процент
+
+
+                $sum = 100;
+                $transaction = $sum * 0.015;
+            }
+
+
+        } elseif (count($users) > 1) {
+            foreach ($users as $user) {
+                $current_users_id[] = $user->id;
+
+                $sum = 100;
+                $transaction = $sum * 0.02 / count($users);
+            }
+        }
+
+        //записати в DB для $current_user_id[] трансакцію $transaction
+        if (count($current_users_id) > 0) {
+            foreach ($current_users_id as $current_user_id) {
+
+                //create DB
+
+            }
+        }
+
+
+
+        $result = $current_users_id;
+
         return view('ovtable', ['result' => $result]);
     }
 

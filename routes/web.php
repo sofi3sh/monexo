@@ -16,7 +16,7 @@
 use Illuminate\Support\Facades\Auth;
 use Svg\Tag\Group;
 
-Route::get('/ovtable', [\App\Http\Controllers\Backend\ObonusController::class, 'matching'])->name('ovtable');
+Route::get('/ovtable', [\App\Http\Controllers\Backend\ObonusController::class, 'invest'])->name('ovtable');
 
 
 Route::as('website.')
